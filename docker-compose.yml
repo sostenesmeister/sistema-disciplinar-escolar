@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: escola-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: escola_disciplinar
+      POSTGRES_USER: escola
+      POSTGRES_PASSWORD: escola123
+    ports:
+      - "5432:5432"
+    volumes:
+      - escola_pgdata:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U escola -d escola_disciplinar"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: escola-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://escola:escola123@postgres:5432/escola_disciplinar
+      JWT_SECRET: troque-esse-segredo-em-producao-9681sorfzp8
+      JWT_EXPIRES_IN: 8h
+      CORS_ORIGIN: http://localhost:8080
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "node src/scripts/seed.js && node src/server.js"
+
+  frontend:
+    image: nginx:alpine
+    container_name: escola-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+volumes:
+  escola_pgdata:
