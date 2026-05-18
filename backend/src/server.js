@@ -15,20 +15,21 @@ import dashboardRoutes from './routes/dashboard.js';
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
-// Segurança
+// SeguranÃ§a
 app.use(helmet());
 app.use(cors({
-    origin: process.env.CORS_ORIGIN?.split(',') || '*',
-    credentials: true,
+  origin: (origin, cb) => cb(null, true),
+  credentials: true,
 }));
 
 // Rate limit (100 req / 15min por IP)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
-    message: { error: 'Muitas requisições. Tente novamente em alguns minutos.' },
+    message: { error: 'Muitas requisiÃ§Ãµes. Tente novamente em alguns minutos.' },
 });
 app.use('/api/', limiter);
 
@@ -53,7 +54,7 @@ app.use('/api/dashboard',   dashboardRoutes);
 app.use((err, _req, res, _next) => {
     console.error('[ERRO]', err);
     if (err.name === 'ZodError') {
-        return res.status(400).json({ error: 'Dados inválidos', detalhes: err.errors });
+        return res.status(400).json({ error: 'Dados invÃ¡lidos', detalhes: err.errors });
     }
     res.status(err.status || 500).json({
         error: err.message || 'Erro interno do servidor',
@@ -62,11 +63,11 @@ app.use((err, _req, res, _next) => {
 
 // 404
 app.use((_req, res) => {
-    res.status(404).json({ error: 'Rota não encontrada' });
+    res.status(404).json({ error: 'Rota nÃ£o encontrada' });
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
-    console.log(`📚 API:  http://localhost:${PORT}/api`);
-    console.log(`❤️  Health: http://localhost:${PORT}/health`);
+    console.log(`ð Servidor rodando em http://localhost:${PORT}`);
+    console.log(`ð API:  http://localhost:${PORT}/api`);
+    console.log(`â¤ï¸  Health: http://localhost:${PORT}/health`);
 });
