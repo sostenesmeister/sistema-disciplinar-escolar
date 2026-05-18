@@ -56,9 +56,146 @@
   .historico-item { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #667eea; }
   .historico-item .data { color: #a0aec0; font-size: 12px; }
   .historico-item .tipo { font-weight: 600; color: #2d3748; margin: 4px 0; }
+
+
+/* ============================================
+   RESPONSIVIDADE - Tablet, Mobile e Pequenos
+   ============================================ */
+
+/* Botão de menu hambúrguer (visível só em mobile) */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1001;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: #667eea;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+
+/* Overlay para fechar sidebar ao clicar fora */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 998;
+}
+.sidebar-overlay.show { display: block; }
+
+/* ---------- TABLET (<= 900px) ---------- */
+@media (max-width: 900px) {
+  .stats { grid-template-columns: repeat(2, 1fr) !important; gap: 12px; }
+  .main { padding: 16px !important; }
+  table { font-size: 13px; }
+  .toolbar { flex-wrap: wrap; gap: 8px; }
+  .toolbar > * { min-width: 140px; }
+}
+
+/* ---------- MOBILE (<= 768px) ---------- */
+@media (max-width: 768px) {
+  /* Mostrar menu hambúrguer */
+  .menu-toggle { display: flex; align-items: center; justify-content: center; }
+
+  /* Sidebar vira drawer lateral */
+  .app { display: block !important; }
+  .sidebar {
+    position: fixed !important;
+    top: 0; left: 0;
+    height: 100vh;
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 999;
+    box-shadow: 2px 0 12px rgba(0,0,0,.15);
+    overflow-y: auto;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .main {
+    margin-left: 0 !important;
+    padding: 64px 14px 20px !important;
+    width: 100%;
+  }
+
+  /* Login responsivo */
+  .login-box { width: 90% !important; max-width: 380px; padding: 24px !important; }
+
+  /* Stats em 2 colunas */
+  .stats { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .card { padding: 14px !important; }
+  .card .valor, .valor { font-size: 22px !important; }
+
+  /* Tabelas: scroll horizontal suave */
+  table { font-size: 12px; }
+  .table-wrapper, .main table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  th, td { padding: 8px 10px !important; }
+
+  /* Toolbar empilhada */
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+  .toolbar > * { width: 100%; min-width: 0; }
+
+  /* Form groups full width */
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Botões com toque maior */
+  .btn { padding: 12px 16px !important; font-size: 15px; }
+  .btn-small { padding: 8px 12px !important; }
+
+  /* Histórico items */
+  .historico-item { padding: 12px !important; }
+
+  /* Modal full screen no mobile */
+  .modal-content, .modal-box {
+    width: 95% !important;
+    max-width: 95% !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ---------- MOBILE PEQUENO (<= 480px) ---------- */
+@media (max-width: 480px) {
+  .stats { grid-template-columns: 1fr !important; }
+  h1 { font-size: 20px !important; }
+  h2 { font-size: 17px !important; }
+  .login-box h1 { font-size: 22px !important; }
+  .subtitle { font-size: 13px !important; }
+  .credenciais { font-size: 12px; }
+  .badge { font-size: 10px !important; padding: 3px 6px !important; }
+}
+
+/* ---------- MOBILE MUITO PEQUENO (<= 360px) ---------- */
+@media (max-width: 360px) {
+  .main { padding: 60px 10px 16px !important; }
+  .login-box { padding: 18px !important; }
+  th, td { padding: 6px 8px !important; font-size: 11px; }
+}
+
 </style>
 </head>
 <body>
+<button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('show');">☰</button>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('show');"></div>
+
 
 <!-- LOGIN -->
 <div id="login-screen" class="login-container">
@@ -369,6 +506,38 @@ window.carregarPagina = carregarPagina;
 
 // auto-login se já existe token
 if (token && usuario) entrarNoApp();
+</script>
+
+<script>
+(function(){
+  function syncToggle(){
+    var login = document.getElementById('login-screen');
+    var toggle = document.getElementById('menu-toggle');
+    if(!login || !toggle) return;
+    var visible = login.style.display !== 'none' && getComputedStyle(login).display !== 'none';
+    toggle.style.display = visible ? 'none' : '';
+    if(!visible){
+      // restore default (CSS will hide on desktop)
+      toggle.style.removeProperty('display');
+    }
+  }
+  document.addEventListener('DOMContentLoaded', syncToggle);
+  // observe display changes
+  var obs = new MutationObserver(syncToggle);
+  document.addEventListener('DOMContentLoaded', function(){
+    var login = document.getElementById('login-screen');
+    if(login) obs.observe(login, {attributes:true, attributeFilter:['style']});
+  });
+  // Close drawer when clicking a menu link on mobile
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('.sidebar a, .sidebar button, .sidebar [data-section]');
+    if(t && window.innerWidth <= 768){
+      document.querySelector('.sidebar').classList.remove('open');
+      var ov = document.getElementById('sidebar-overlay');
+      if(ov) ov.classList.remove('show');
+    }
+  });
+})();
 </script>
 </body>
 </html>
