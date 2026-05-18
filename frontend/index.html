@@ -63,12 +63,12 @@
 <!-- LOGIN -->
 <div id="login-screen" class="login-container">
   <div class="login-box">
-    <h1>ð« Sistema Disciplinar</h1>
-    <p class="subtitle">Controle de ocorrÃªncias e advertÃªncias</p>
+    <h1>🏫 Sistema Disciplinar</h1>
+    <p class="subtitle">Controle de ocorrências e advertências</p>
     <div id="erro-login" class="erro" style="display:none"></div>
     <form id="form-login">
       <div class="form-group">
-        <label>UsuÃ¡rio</label>
+        <label>Usuário</label>
         <input type="text" id="login" required autocomplete="username">
       </div>
       <div class="form-group">
@@ -78,7 +78,7 @@
       <button type="submit" class="btn" id="btn-entrar">Entrar</button>
     </form>
     <div class="credenciais">
-      <strong>Credenciais de demonstraÃ§Ã£o:</strong><br>
+      <strong>Credenciais de demonstração:</strong><br>
       admin / escola123 (ADMIN)<br>
       maria / prof123 (Professor)<br>
       joao / coord123 (Coordenador)
@@ -92,16 +92,16 @@
     <h2>Sistema Disciplinar</h2>
     <div class="user" id="user-info"></div>
     <nav>
-      <a data-pagina="dashboard" class="ativo">ð Dashboard</a>
-      <a data-pagina="alunos">ð¨âð Alunos</a>
-      <a data-pagina="turmas">ð« Turmas</a>
-      <a data-pagina="ocorrencias">â ï¸ OcorrÃªncias</a>
-      <a data-pagina="usuarios" id="link-usuarios" style="display:none">ð¥ UsuÃ¡rios</a>
-      <a id="btn-sair" style="margin-top: 30px; color: #fc8181;">ðª Sair</a>
+      <a data-pagina="dashboard" class="ativo">📊 Dashboard</a>
+      <a data-pagina="alunos">👨‍🎓 Alunos</a>
+      <a data-pagina="turmas">🏫 Turmas</a>
+      <a data-pagina="ocorrencias">⚠️ Ocorrências</a>
+      <a data-pagina="usuarios" id="link-usuarios" style="display:none">👥 Usuários</a>
+      <a id="btn-sair" style="margin-top: 30px; color: #fc8181;">🚪 Sair</a>
     </nav>
   </aside>
   <main class="main" id="main-content">
-    <p>Carregandoâ¦</p>
+    <p>Carregando…</p>
   </main>
 </div>
 
@@ -110,7 +110,7 @@
 let token = localStorage.getItem('token');
 let usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
 
-// âââââ helpers âââââ
+// ───── helpers ─────
 async function api(path, opts = {}) {
   const res = await fetch(API + path, {
     ...opts,
@@ -122,11 +122,11 @@ async function api(path, opts = {}) {
   });
   if (res.status === 401) {
     sair();
-    throw new Error('SessÃ£o expirada');
+    throw new Error('Sessão expirada');
   }
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Erro ' + res.status }));
-    throw new Error(err.error || 'Erro na requisiÃ§Ã£o');
+    throw new Error(err.error || 'Erro na requisição');
   }
   return res.json();
 }
@@ -141,7 +141,7 @@ function formatData(d) {
   return dia + '/' + m + '/' + a;
 }
 
-// âââââ login âââââ
+// ───── login ─────
 document.getElementById('form-login').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('btn-entrar');
@@ -194,7 +194,7 @@ function sair() {
 
 document.getElementById('btn-sair').addEventListener('click', sair);
 
-// âââââ navegaÃ§Ã£o âââââ
+// ───── navegação ─────
 document.querySelectorAll('.sidebar nav a[data-pagina]').forEach((a) => {
   a.addEventListener('click', () => {
     document.querySelectorAll('.sidebar nav a').forEach((x) => x.classList.remove('ativo'));
@@ -205,7 +205,7 @@ document.querySelectorAll('.sidebar nav a[data-pagina]').forEach((a) => {
 
 async function carregarPagina(pagina) {
   const main = document.getElementById('main-content');
-  main.innerHTML = '<p>Carregandoâ¦</p>';
+  main.innerHTML = '<p>Carregando…</p>';
   try {
     if (pagina === 'dashboard')   await pageDashboard(main);
     else if (pagina === 'alunos')      await pageAlunos(main);
@@ -217,25 +217,25 @@ async function carregarPagina(pagina) {
   }
 }
 
-// âââââ pÃ¡ginas âââââ
+// ───── páginas ─────
 async function pageDashboard(main) {
   const d = await api('/dashboard');
   main.innerHTML = `
-    <h1>ð Dashboard</h1>
+    <h1>📊 Dashboard</h1>
     <div class="stats">
       <div class="card"><div class="label">Turmas ativas</div><div class="valor">${d.stats.turmas}</div></div>
       <div class="card"><div class="label">Alunos ativos</div><div class="valor">${d.stats.alunos}</div></div>
-      <div class="card"><div class="label">OcorrÃªncias (ano)</div><div class="valor">${d.stats.ocorrencias_ano}</div></div>
+      <div class="card"><div class="label">Ocorrências (ano)</div><div class="valor">${d.stats.ocorrencias_ano}</div></div>
       <div class="card"><div class="label">Em aberto</div><div class="valor">${d.stats.em_aberto}</div></div>
     </div>
 
-    <h2 style="margin: 25px 0 12px; color: #4a5568; font-size: 18px;">ð Busca rÃ¡pida</h2>
+    <h2 style="margin: 25px 0 12px; color: #4a5568; font-size: 18px;">🔍 Busca rápida</h2>
     <div class="toolbar">
-      <input type="text" id="busca-aluno" placeholder="Digite o nome ou matrÃ­cula do aluno...">
+      <input type="text" id="busca-aluno" placeholder="Digite o nome ou matrícula do aluno...">
     </div>
     <div id="resultados-busca"></div>
 
-    <h2 style="margin: 25px 0 12px; color: #4a5568; font-size: 18px;">ð OcorrÃªncias recentes</h2>
+    <h2 style="margin: 25px 0 12px; color: #4a5568; font-size: 18px;">📋 Ocorrências recentes</h2>
     <table>
       <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Status</th></tr></thead>
       <tbody>
@@ -264,8 +264,8 @@ async function pageDashboard(main) {
       if (!alunos.length) { div.innerHTML = '<p style="color:#a0aec0">Nenhum aluno encontrado.</p>'; return; }
       div.innerHTML = alunos.map(a => `
         <div class="historico-item" style="cursor:pointer" onclick="verHistorico(${a.id}, '${a.nome.replace(/'/g, "\\'")}')">
-          <strong>${a.nome}</strong> â MatrÃ­cula ${a.matricula} â Turma ${a.turma_nome}
-          <span style="float:right; color:#667eea; font-weight:600">${a.total_ocorrencias} ocorrÃªncia(s)</span>
+          <strong>${a.nome}</strong> — Matrícula ${a.matricula} — Turma ${a.turma_nome}
+          <span style="float:right; color:#667eea; font-weight:600">${a.total_ocorrencias} ocorrência(s)</span>
         </div>
       `).join('');
     }, 300);
@@ -276,13 +276,13 @@ window.verHistorico = async function (alunoId, alunoNome) {
   const main = document.getElementById('main-content');
   const historico = await api('/alunos/' + alunoId + '/historico');
   main.innerHTML = `
-    <h1>ð HistÃ³rico â ${alunoNome}</h1>
-    <button class="btn-small" onclick="carregarPagina('dashboard')">â Voltar</button>
+    <h1>📜 Histórico — ${alunoNome}</h1>
+    <button class="btn-small" onclick="carregarPagina('dashboard')">← Voltar</button>
     <div style="margin-top: 20px;">
-      ${historico.length === 0 ? '<p>Sem ocorrÃªncias registradas.</p>' :
+      ${historico.length === 0 ? '<p>Sem ocorrências registradas.</p>' :
         historico.map(o => `
           <div class="historico-item">
-            <div class="data">${formatData(o.data_ocorrencia)} Â· ${badge('gravidade', o.gravidade)} ${badge('status', o.status)}</div>
+            <div class="data">${formatData(o.data_ocorrencia)} · ${badge('gravidade', o.gravidade)} ${badge('status', o.status)}</div>
             <div class="tipo">${o.tipo}</div>
             <div>${o.descricao}</div>
             ${o.medida_aplicada ? '<div style="margin-top:6px;color:#4a5568;font-size:13px"><strong>Medida:</strong> ' + o.medida_aplicada + '</div>' : ''}
@@ -297,14 +297,14 @@ window.verHistorico = async function (alunoId, alunoNome) {
 async function pageAlunos(main) {
   const alunos = await api('/alunos');
   main.innerHTML = `
-    <h1>ð¨âð Alunos</h1>
+    <h1>👨‍🎓 Alunos</h1>
     <table>
-      <thead><tr><th>MatrÃ­cula</th><th>Nome</th><th>Turma</th><th>Status</th><th></th></tr></thead>
+      <thead><tr><th>Matrícula</th><th>Nome</th><th>Turma</th><th>Status</th><th></th></tr></thead>
       <tbody>
         ${alunos.map(a => `
           <tr>
             <td>${a.matricula}</td><td>${a.nome}</td><td>${a.turma_nome}</td><td>${a.status}</td>
-            <td><button class="btn-small" onclick="verHistorico(${a.id}, '${a.nome.replace(/'/g, "\\'")}')">HistÃ³rico</button></td>
+            <td><button class="btn-small" onclick="verHistorico(${a.id}, '${a.nome.replace(/'/g, "\\'")}')">Histórico</button></td>
           </tr>
         `).join('')}
       </tbody>
@@ -315,9 +315,9 @@ async function pageAlunos(main) {
 async function pageTurmas(main) {
   const turmas = await api('/turmas');
   main.innerHTML = `
-    <h1>ð« Turmas</h1>
+    <h1>🏫 Turmas</h1>
     <table>
-      <thead><tr><th>Nome</th><th>SÃ©rie</th><th>Turno</th><th>Ano</th><th>Professor</th><th>Alunos</th><th>Status</th></tr></thead>
+      <thead><tr><th>Nome</th><th>Série</th><th>Turno</th><th>Ano</th><th>Professor</th><th>Alunos</th><th>Status</th></tr></thead>
       <tbody>
         ${turmas.map(t => `
           <tr><td><strong>${t.nome}</strong></td><td>${t.serie}</td><td>${t.turno}</td><td>${t.ano_letivo}</td>
@@ -331,7 +331,7 @@ async function pageTurmas(main) {
 async function pageOcorrencias(main) {
   const ocs = await api('/ocorrencias');
   main.innerHTML = `
-    <h1>â ï¸ OcorrÃªncias</h1>
+    <h1>⚠️ Ocorrências</h1>
     <table>
       <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Medida</th><th>Status</th></tr></thead>
       <tbody>
@@ -350,14 +350,14 @@ async function pageOcorrencias(main) {
 async function pageUsuarios(main) {
   const us = await api('/usuarios');
   main.innerHTML = `
-    <h1>ð¥ UsuÃ¡rios</h1>
+    <h1>👥 Usuários</h1>
     <table>
-      <thead><tr><th>Login</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Ativo</th><th>Ãltimo acesso</th></tr></thead>
+      <thead><tr><th>Login</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Ativo</th><th>Último acesso</th></tr></thead>
       <tbody>
         ${us.map(u => `
           <tr><td>${u.login}</td><td>${u.nome}</td><td>${u.email || '-'}</td>
             <td><span class="badge badge-leve">${u.perfil}</span></td>
-            <td>${u.ativo ? 'â' : 'â'}</td>
+            <td>${u.ativo ? '✅' : '❌'}</td>
             <td>${u.ultimo_acesso ? formatData(u.ultimo_acesso) : 'Nunca'}</td></tr>
         `).join('')}
       </tbody>
@@ -367,7 +367,7 @@ async function pageUsuarios(main) {
 
 window.carregarPagina = carregarPagina;
 
-// auto-login se jÃ¡ existe token
+// auto-login se já existe token
 if (token && usuario) entrarNoApp();
 </script>
 </body>
