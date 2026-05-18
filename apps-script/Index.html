@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Disciplinar Escolar</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:#f0f2f5;min-height:100vh}
+.hidden{display:none!important}
+
+/* LOGIN */
+#loginPage{min-height:100vh;background:linear-gradient(135deg,#1a237e 0%,#283593 50%,#3949ab 100%);display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo h1{font-size:22px;color:#1a237e;font-weight:700;margin-top:10px}
+.login-logo p{color:#888;font-size:13px;margin-top:4px}
+.login-logo span{font-size:48px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px}
+.form-group input{width:100%;padding:12px 14px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;transition:.2s;outline:none}
+.form-group input:focus{border-color:#3f51b5;background:#f8f9ff}
+.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,#3f51b5,#1a237e);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.5px}
+.btn-login:hover{opacity:.9;transform:translateY(-1px)}
+.login-msg{margin-top:12px;text-align:center;font-size:13px;padding:8px;border-radius:6px;display:none}
+.login-msg.success{background:#e8f5e9;color:#2e7d32;display:block}
+.login-msg.error{background:#ffebee;color:#c62828;display:block}
+.login-hint{margin-top:16px;text-align:center;font-size:12px;color:#aaa}
+.login-hint b{color:#7986cb}
+
+/* NAVBAR */
+#app{display:none;flex-direction:column;min-height:100vh}
+.navbar{background:linear-gradient(135deg,#1a237e,#283593);color:#fff;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.navbar-brand{font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.navbar-right{display:flex;align-items:center;gap:16px}
+.user-badge{background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:13px;display:flex;align-items:center;gap:8px}
+.btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;transition:.2s}
+.btn-logout:hover{background:rgba(255,255,255,.2)}
+
+/* SIDEBAR + CONTENT */
+.layout{display:flex;flex:1}
+.sidebar{width:220px;background:#fff;box-shadow:2px 0 10px rgba(0,0,0,.05);padding:16px 0;flex-shrink:0}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 20px;color:#555;font-size:14px;font-weight:500;cursor:pointer;transition:.2s;border-left:3px solid transparent}
+.nav-item:hover{background:#f5f6ff;color:#3f51b5}
+.nav-item.active{background:#e8eaf6;color:#3f51b5;border-left-color:#3f51b5;font-weight:600}
+.nav-item span{font-size:18px}
+.content{flex:1;padding:24px;overflow-y:auto}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+.page-title{font-size:22px;font-weight:700;color:#1a237e;margin-bottom:6px}
+.page-sub{color:#888;font-size:14px;margin-bottom:24px}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.06);border-top:4px solid}
+.card.blue{border-color:#3f51b5}.card.green{border-color:#4caf50}.card.red{border-color:#f44336}.card.orange{border-color:#ff9800}
+.card-label{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.card-value{font-size:32px;font-weight:700}
+.card.blue .card-value{color:#3f51b5}.card.green .card-value{color:#4caf50}.card.red .card-value{color:#f44336}.card.orange .card-value{color:#ff9800}
+.card-icon{font-size:28px;float:right;opacity:.3}
+
+/* TABLES */
+.table-wrap{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow:hidden;margin-bottom:24px}
+.table-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.table-header h3{font-size:15px;font-weight:600;color:#333}
+table{width:100%;border-collapse:collapse}
+th{background:#f8f9fa;padding:12px 14px;text-align:left;font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #eee}
+td{padding:12px 14px;border-bottom:1px solid #f5f5f5;font-size:13px;color:#444}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbff}
+.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;display:inline-block}
+.badge-green{background:#e8f5e9;color:#2e7d32}
+.badge-red{background:#ffebee;color:#c62828}
+.badge-orange{background:#fff3e0;color:#e65100}
+.badge-blue{background:#e3f2fd;color:#1565c0}
+.badge-purple{background:#f3e5f5;color:#6a1b9a}
+.badge-yellow{background:#fffde7;color:#f57f17}
+
+/* BUSCA ALUNO */
+.search-box{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:20px;margin-bottom:24px}
+.search-row{display:flex;gap:12px;align-items:center}
+.search-input{flex:1;padding:11px 16px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;transition:.2s}
+.search-input:focus{border-color:#3f51b5}
+.btn-search{padding:11px 24px;background:#3f51b5;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600}
+.btn-search:hover{background:#1a237e}
+
+/* NOVA OCORRÊNCIA FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-full{grid-column:1/-1}
+.form-ctrl{display:flex;flex-direction:column;gap:6px}
+.form-ctrl label{font-size:13px;font-weight:600;color:#555}
+.form-ctrl input,.form-ctrl select,.form-ctrl textarea{padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;transition:.2s}
+.form-ctrl input:focus,.form-ctrl select:focus,.form-ctrl textarea:focus{border-color:#3f51b5}
+.btn-primary{padding:12px 28px;background:#3f51b5;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600}
+.btn-primary:hover{background:#1a237e}
+.btn-success{padding:12px 28px;background:#4caf50;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600}
+.btn-success:hover{background:#388e3c}
+.alert-success{background:#e8f5e9;color:#2e7d32;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:500;display:none}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:#aaa;font-size:14px}
+.spinner{display:inline-block;width:24px;height:24px;border:3px solid #e0e0e0;border-top-color:#3f51b5;border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+<div class="login-box">
+  <div class="login-logo">
+    <span>🏫</span>
+    <h1>Sistema Disciplinar Escolar</h1>
+    <p>Gestão de Turmas, Alunos e Ocorrências</p>
+  </div>
+  <div class="form-group">
+    <label>👤 Usuário</label>
+    <input type="text" id="inputUser" placeholder="Digite seu usuário" onkeypress="if(event.key==='Enter')doLogin()">
+  </div>
+  <div class="form-group">
+    <label>🔒 Senha</label>
+    <input type="password" id="inputPass" placeholder="Digite sua senha" onkeypress="if(event.key==='Enter')doLogin()">
+  </div>
+  <button class="btn-login" onclick="doLogin()">▶ ENTRAR NO SISTEMA</button>
+  <div id="loginMsg" class="login-msg"></div>
+  <div class="login-hint">💡 admin / escola123 &nbsp;|&nbsp; <b>maria / prof123</b> &nbsp;|&nbsp; joao / coord123</div>
+</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="navbar">
+    <div class="navbar-brand">🏫 Sistema Disciplinar Escolar</div>
+    <div class="navbar-right">
+      <div class="user-badge">👤 <span id="nomeUsuarioLogado">-</span> &nbsp;·&nbsp; <span id="perfilLogado" style="opacity:.7;font-size:11px">-</span></div>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </nav>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><span>📊</span> Dashboard</div>
+      <div class="nav-item" onclick="showPage('ocorrencias',this)"><span>⚠️</span> Ocorrências</div>
+      <div class="nav-item" onclick="showPage('novaOcorrencia',this)"><span>➕</span> Nova Ocorrência</div>
+      <div class="nav-item" onclick="showPage('alunos',this)"><span>👨‍🎓</span> Alunos</div>
+      <div class="nav-item" onclick="showPage('turmas',this)"><span>🏫</span> Turmas</div>
+      <div class="nav-item" id="menuUsuarios" onclick="showPage('usuarios',this)"><span>👥</span> Usuários</div>
+    </aside>
+    <main class="content">
+
+      <!-- DASHBOARD -->
+      <div id="pageDashboard" class="page active">
+        <div class="page-title">📊 Painel de Controle</div>
+        <div class="page-sub">Visão geral do sistema disciplinar</div>
+        <div class="cards" id="cards"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
+        
+        <div class="search-box">
+          <h3 style="margin-bottom:14px;color:#333;font-size:15px">🔍 Histórico do Aluno — Busca Rápida</h3>
+          <div class="search-row">
+            <input type="text" class="search-input" id="buscaAluno" placeholder="Digite o nome do aluno..." value="Noel Ferreira Santos">
+            <button class="btn-search" onclick="buscarAluno()">Buscar</button>
+          </div>
+        </div>
+        <div id="resultadoBusca"></div>
+      </div>
+
+      <!-- OCORRÊNCIAS -->
+      <div id="pageOcorrencias" class="page">
+        <div class="page-title">⚠️ Registro de Ocorrências</div>
+        <div class="page-sub">Histórico completo de ocorrências disciplinares</div>
+        <div id="tabelaOcorrencias"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
+      </div>
+
+      <!-- NOVA OCORRÊNCIA -->
+      <div id="pageNovaOcorrencia" class="page">
+        <div class="page-title">➕ Nova Ocorrência</div>
+        <div class="page-sub">Registre uma nova ocorrência disciplinar</div>
+        <div class="table-wrap" style="padding:24px">
+          <div class="alert-success" id="alertSucesso">✅ Ocorrência registrada com sucesso!</div>
+          <div class="form-grid">
+            <div class="form-ctrl"><label>Nome do Aluno *</label><input type="text" id="noAluno" placeholder="Nome completo do aluno"></div>
+            <div class="form-ctrl"><label>Turma *</label>
+              <select id="noTurma"><option value="">Selecione...</option><option>6A</option><option>6B</option><option>7A</option><option>7B</option><option>8A</option><option>9A</option></select>
+            </div>
+            <div class="form-ctrl"><label>Tipo de Ocorrência *</label>
+              <select id="noTipo"><option value="">Selecione...</option><option>BRIGA</option><option>DESOBEDIÊNCIA</option><option>DESRESPEITO</option><option>AGRESSÃO VERBAL</option><option>VANDALISMO</option><option>USO DE CELULAR</option><option>BULLYING</option><option>OUTRO</option></select>
+            </div>
+            <div class="form-ctrl"><label>Medida Tomada *</label>
+              <select id="noMedida"><option value="">Selecione...</option><option>ADVERTÊNCIA VERBAL</option><option>ADVERTÊNCIA ESCRITA</option><option>SUSPENSÃO 1 DIA</option><option>SUSPENSÃO 3 DIAS</option><option>ENCAMINHAMENTO À COORDENAÇÃO</option><option>CONVOCAÇÃO DE RESPONSÁVEL</option></select>
+            </div>
+            <div class="form-ctrl form-full"><label>Descrição Detalhada *</label><textarea id="noDescricao" rows="3" placeholder="Descreva o ocorrido com detalhes..."></textarea></div>
+            <div class="form-ctrl"><label>Responsável Notificado?</label>
+              <select id="noNotificado"><option>NÃO</option><option>SIM</option></select>
+            </div>
+          </div>
+          <button class="btn-success" onclick="salvarOcorrencia()">💾 Salvar Ocorrência</button>
+        </div>
+      </div>
+
+      <!-- ALUNOS -->
+      <div id="pageAlunos" class="page">
+        <div class="page-title">👨‍🎓 Cadastro de Alunos</div>
+        <div class="page-sub">Lista de alunos matriculados</div>
+        <div id="tabelaAlunos"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
+      </div>
+
+      <!-- TURMAS -->
+      <div id="pageTurmas" class="page">
+        <div class="page-title">🏫 Cadastro de Turmas</div>
+        <div class="page-sub">Turmas ativas no sistema</div>
+        <div id="tabelaTurmas"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
+      </div>
+
+      <!-- USUÁRIOS -->
+      <div id="pageUsuarios" class="page">
+        <div class="page-title">👥 Usuários do Sistema</div>
+        <div class="page-sub">Gerenciamento de acesso</div>
+        <div id="tabelaUsuarios"><div class="loading"><span class="spinner"></span>Carregando...</div></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+var usuarioLogado = null;
+
+function doLogin() {
+  var u = document.getElementById('inputUser').value.trim();
+  var p = document.getElementById('inputPass').value.trim();
+  var msg = document.getElementById('loginMsg');
+  if(!u||!p){showMsg('Preencha usuário e senha!','error');return;}
+  msg.className='login-msg';msg.style.display='block';msg.textContent='⏳ Verificando...';
+  google.script.run
+    .withSuccessHandler(function(res){
+      if(res.ok){
+        usuarioLogado=res;
+        document.getElementById('nomeUsuarioLogado').textContent=res.nome;
+        document.getElementById('perfilLogado').textContent=res.perfil;
+        if(res.perfil!=='ADMIN') document.getElementById('menuUsuarios').style.display='none';
+        document.getElementById('loginPage').style.display='none';
+        document.getElementById('app').style.display='flex';
+        loadDashboard();
+      } else { showMsg('❌ '+res.msg,'error'); }
+    })
+    .withFailureHandler(function(e){showMsg('Erro: '+e.message,'error');})
+    .fazerLogin(u,p);
+}
+
+function showMsg(t,c){var m=document.getElementById('loginMsg');m.textContent=t;m.className='login-msg '+c;}
+
+function doLogout(){
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('inputUser').value='';
+  document.getElementById('inputPass').value='';
+  document.getElementById('loginMsg').style.display='none';
+}
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name==='ocorrencias') loadOcorrencias();
+  if(name==='alunos') loadAlunos();
+  if(name==='turmas') loadTurmas();
+  if(name==='usuarios') loadUsuarios();
+}
+
+function loadDashboard(){
+  document.getElementById('cards').innerHTML='<div class="loading"><span class="spinner"></span>Carregando...</div>';
+  google.script.run
+    .withSuccessHandler(function(d){
+      document.getElementById('cards').innerHTML=
+        '<div class="card blue"><div class="card-label"><span class="card-icon">🏫</span>Turmas Ativas</div><div class="card-value">'+d.turmas+'</div></div>'+
+        '<div class="card green"><div class="card-label"><span class="card-icon">👨‍🎓</span>Total de Alunos</div><div class="card-value">'+d.alunos+'</div></div>'+
+        '<div class="card red"><div class="card-label"><span class="card-icon">⚠️</span>Ocorrências Total</div><div class="card-value">'+d.ocorrencias+'</div></div>'+
+        '<div class="card orange"><div class="card-label"><span class="card-icon">🔴</span>Em Aberto</div><div class="card-value">'+d.abertos+'</div></div>';
+      buscarAluno();
+    })
+    .getDashboardData();
+}
+
+function buscarAluno(){
+  var nome=document.getElementById('buscaAluno').value.trim();
+  if(!nome){document.getElementById('resultadoBusca').innerHTML='';return;}
+  document.getElementById('resultadoBusca').innerHTML='<div class="loading"><span class="spinner"></span>Buscando...</div>';
+  google.script.run
+    .withSuccessHandler(function(rows){
+      if(!rows||rows.length===0){
+        document.getElementById('resultadoBusca').innerHTML='<div class="table-wrap" style="padding:20px;color:#aaa;text-align:center">Nenhuma ocorrência encontrada para este aluno.</div>';
+        return;
+      }
+      var html='<div class="table-wrap"><div class="table-header"><h3>📋 Histórico de <b>'+nome+'</b> — '+rows.length+' ocorrência(s)</h3></div><table><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Medida</th><th>Notificado</th><th>Status</th></tr></thead><tbody>';
+      rows.forEach(function(r){html+='<tr><td>'+r[0]+'</td><td>'+badgeTipo(r[1])+'</td><td style="max-width:280px">'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td>'+badgeStatus(r[5])+'</td></tr>';});
+      html+='</tbody></table></div>';
+      document.getElementById('resultadoBusca').innerHTML=html;
+    })
+    .getHistoricoAluno(nome);
+}
+
+function loadOcorrencias(){
+  document.getElementById('tabelaOcorrencias').innerHTML='<div class="loading"><span class="spinner"></span>Carregando...</div>';
+  google.script.run
+    .withSuccessHandler(function(rows){
+      var html='<div class="table-wrap"><div class="table-header"><h3>⚠️ Todas as Ocorrências ('+rows.length+')</h3></div><table><thead><tr><th>#</th><th>Aluno</th><th>Turma</th><th>Data</th><th>Tipo</th><th>Medida Tomada</th><th>Registrado Por</th><th>Status</th></tr></thead><tbody>';
+      rows.forEach(function(r){html+='<tr><td>'+r[0]+'</td><td><b>'+r[1]+'</b></td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+badgeTipo(r[4])+'</td><td>'+r[6]+'</td><td>'+r[8]+'</td><td>'+badgeStatus(r[9])+'</td></tr>';});
+      html+='</tbody></table></div>';
+      document.getElementById('tabelaOcorrencias').innerHTML=html;
+    })
+    .getOcorrencias();
+}
+
+function loadAlunos(){
+  document.getElementById('tabelaAlunos').innerHTML='<div class="loading"><span class="spinner"></span>Carregando...</div>';
+  google.script.run
+    .withSuccessHandler(function(rows){
+      var html='<div class="table-wrap"><div class="table-header"><h3>👨‍🎓 Alunos Cadastrados ('+rows.length+')</h3></div><table><thead><tr><th>#</th><th>Nome</th><th>Turma</th><th>Data Nasc.</th><th>Responsável</th><th>Telefone</th><th>Ocorrências</th><th>Status</th></tr></thead><tbody>';
+      rows.forEach(function(r){html+='<tr><td>'+r[0]+'</td><td><b>'+r[1]+'</b></td><td><span class="badge badge-blue">'+r[2]+'</span></td><td>'+r[3]+'</td><td>'+r[4]+'</td><td>'+r[5]+'</td><td><span class="badge '+(r[7]>0?'badge-red':'badge-green')+'">'+r[7]+' ocorr.</span></td><td>'+badgeStatus2(r[8])+'</td></tr>';});
+      html+='</tbody></table></div>';
+      document.getElementById('tabelaAlunos').innerHTML=html;
+    })
+    .getAlunos();
+}
+
+function loadTurmas(){
+  document.getElementById('tabelaTurmas').innerHTML='<div class="loading"><span class="spinner"></span>Carregando...</div>';
+  google.script.run
+    .withSuccessHandler(function(rows){
+      var html='<div class="table-wrap"><div class="table-header"><h3>🏫 Turmas Cadastradas ('+rows.length+')</h3></div><table><thead><tr><th>#</th><th>Turma</th><th>Ano/Série</th><th>Turno</th><th>Professor Resp.</th><th>Sala</th><th>Qtd Alunos</th><th>Status</th></tr></thead><tbody>';
+      rows.forEach(function(r){html+='<tr><td>'+r[0]+'</td><td><b>'+r[1]+'</b></td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td>'+r[5]+'</td><td>'+r[6]+'</td><td>'+badgeStatus2(r[7])+'</td></tr>';});
+      html+='</tbody></table></div>';
+      document.getElementById('tabelaTurmas').innerHTML=html;
+    })
+    .getTurmas();
+}
+
+function loadUsuarios(){
+  document.getElementById('tabelaUsuarios').innerHTML='<div class="loading"><span class="spinner"></span>Carregando...</div>';
+  google.script.run
+    .withSuccessHandler(function(rows){
+      var html='<div class="table-wrap"><div class="table-header"><h3>👥 Usuários do Sistema</h3></div><table><thead><tr><th>#</th><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Status</th><th>Data Criação</th></tr></thead><tbody>';
+      rows.forEach(function(r){html+='<tr><td>'+r[0]+'</td><td><b>'+r[1]+'</b></td><td>'+r[2]+'</td><td><span class="badge '+(r[4]==='ADMIN'?'badge-purple':r[4]==='COORDENADOR'?'badge-orange':'badge-blue')+'">'+r[4]+'</span></td><td>'+badgeStatus2(r[5])+'</td><td>'+r[6]+'</td></tr>';});
+      html+='</tbody></table></div>';
+      document.getElementById('tabelaUsuarios').innerHTML=html;
+    })
+    .getUsuarios();
+}
+
+function salvarOcorrencia(){
+  var al=document.getElementById('noAluno').value.trim();
+  var tu=document.getElementById('noTurma').value;
+  var ti=document.getElementById('noTipo').value;
+  var me=document.getElementById('noMedida').value;
+  var de=document.getElementById('noDescricao').value.trim();
+  var no=document.getElementById('noNotificado').value;
+  if(!al||!tu||!ti||!me||!de){alert('Preencha todos os campos obrigatórios!');return;}
+  google.script.run
+    .withSuccessHandler(function(){
+      var a=document.getElementById('alertSucesso');a.style.display='block';
+      document.getElementById('noAluno').value='';
+      document.getElementById('noDescricao').value='';
+      document.getElementById('noTurma').value='';
+      document.getElementById('noTipo').value='';
+      document.getElementById('noMedida').value='';
+      setTimeout(function(){a.style.display='none';},3000);
+    })
+    .salvarNovaOcorrencia(al,tu,ti,de,me,no);
+}
+
+function badgeTipo(t){
+  var m={'BRIGA':'badge-red','DESOBEDIÊNCIA':'badge-orange','DESRESPEITO':'badge-yellow','AGRESSÃO VERBAL':'badge-red','VANDALISMO':'badge-orange','USO DE CELULAR':'badge-purple','BULLYING':'badge-red'};
+  return '<span class="badge '+(m[t]||'badge-blue')+'">'+t+'</span>';
+}
+function badgeStatus(s){return s==='RESOLVIDO'?'<span class="badge badge-green">'+s+'</span>':'<span class="badge badge-red">'+s+'</span>';}
+function badgeStatus2(s){return s==='ATIVA'||s==='ATIVO'?'<span class="badge badge-green">'+s+'</span>':'<span class="badge badge-red">'+s+'</span>';}
+</script>
+</body>
+</html>
