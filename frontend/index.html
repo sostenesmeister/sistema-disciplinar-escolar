@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Disciplinar Escolar</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+  .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+  .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px; }
+  .login-box h1 { color: #4a5568; text-align: center; margin-bottom: 8px; font-size: 24px; }
+  .login-box .subtitle { text-align: center; color: #a0aec0; margin-bottom: 30px; font-size: 14px; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; color: #4a5568; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
+  .form-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border .2s; }
+  .form-group input:focus { outline: none; border-color: #667eea; }
+  .btn { width: 100%; padding: 13px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
+  .erro { background: #fed7d7; color: #c53030; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
+  .credenciais { margin-top: 25px; padding: 15px; background: #f7fafc; border-radius: 8px; font-size: 12px; color: #4a5568; }
+  .credenciais strong { color: #2d3748; }
+
+  /* Dashboard */
+  .app { display: none; min-height: 100vh; background: #f7fafc; }
+  .app.ativo { display: flex; }
+  .sidebar { width: 240px; background: #2d3748; color: white; padding: 20px 0; }
+  .sidebar h2 { padding: 0 20px 20px; font-size: 16px; border-bottom: 1px solid #4a5568; }
+  .sidebar .user { padding: 15px 20px; font-size: 13px; color: #a0aec0; border-bottom: 1px solid #4a5568; }
+  .sidebar nav a { display: block; padding: 12px 20px; color: #e2e8f0; text-decoration: none; transition: background .15s; cursor: pointer; }
+  .sidebar nav a:hover, .sidebar nav a.ativo { background: #4a5568; }
+  .main { flex: 1; padding: 30px; overflow-y: auto; }
+  .main h1 { color: #2d3748; margin-bottom: 20px; font-size: 22px; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+  .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+  .card .label { color: #a0aec0; font-size: 12px; text-transform: uppercase; }
+  .card .valor { color: #2d3748; font-size: 32px; font-weight: 700; margin-top: 5px; }
+
+  table { width: 100%; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+  table th, table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #edf2f7; font-size: 14px; }
+  table th { background: #f7fafc; color: #4a5568; font-weight: 600; text-transform: uppercase; font-size: 11px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-leve { background: #c6f6d5; color: #22543d; }
+  .badge-media { background: #feebc8; color: #7b341e; }
+  .badge-grave { background: #fed7d7; color: #742a2a; }
+  .badge-gravissima { background: #2d3748; color: white; }
+  .badge-aberto { background: #bee3f8; color: #1e3a8a; }
+  .badge-concluido { background: #c6f6d5; color: #22543d; }
+
+  .toolbar { display: flex; gap: 10px; margin-bottom: 20px; }
+  .toolbar input { flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; }
+  .btn-small { padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+
+  .historico-item { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #667eea; }
+  .historico-item .data { color: #a0aec0; font-size: 12px; }
+  .historico-item .tipo { font-weight: 600; color: #2d3748; margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="login-container">
+  <div class="login-box">
+    <h1>🏫 Sistema Disciplinar</h1>
+    <p class="subtitle">Controle de ocorrências e advertências</p>
+    <div id="erro-login" class="erro" style="display:none"></div>
+    <form id="form-login">
+      <div class="form-group">
+        <label>Usuário</label>
+        <input type="text" id="login" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="senha" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn" id="btn-entrar">Entrar</button>
+    </form>
+    <div class="credenciais">
+      <strong>Credenciais de demonstração:</strong><br>
+      admin / escola123 (ADMIN)<br>
+      maria / prof123 (Professor)<br>
+      joao / coord123 (Coordenador)
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app">
+  <aside class="sidebar">
+    <h2>Sistema Disciplinar</h2>
+    <div class="user" id="user-info"></div>
+    <nav>
+      <a data-pagina="dashboard" class="ativo">📊 Dashboard</a>
+      <a data-pagina="alunos">👨‍🎓 Alunos</a>
+      <a data-pagina="turmas">🏫 Turmas</a>
+      <a data-pagina="ocorrencias">⚠️ Ocorrências</a>
+      <a data-pagina="usuarios" id="link-usuarios" style="display:none">👥 Usuários</a>
+      <a id="btn-sair" style="margin-top: 30px; color: #fc8181;">🚪 Sair</a>
+    </nav>
+  </aside>
+  <main class="main" id="main-content">
+    <p>Carregando…</p>
+  </main>
+</div>
+
+<script>
+const API = window.location.protocol + '//' + window.location.hostname + ':3000/api';
+let token = localStorage.getItem('token');
+let usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+
+// ───── helpers ─────
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+      ...(opts.headers || {}),
+    },
+  });
+  if (res.status === 401) {
+    sair();
+    throw new Error('Sessão expirada');
+  }
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Erro ' + res.status }));
+    throw new Error(err.error || 'Erro na requisição');
+  }
+  return res.json();
+}
+
+function badge(tipo, valor) {
+  return '<span class="badge badge-' + valor.toLowerCase() + '">' + valor + '</span>';
+}
+
+function formatData(d) {
+  if (!d) return '-';
+  const [a, m, dia] = d.substring(0, 10).split('-');
+  return dia + '/' + m + '/' + a;
+}
+
+// ───── login ─────
+document.getElementById('form-login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('btn-entrar');
+  const erro = document.getElementById('erro-login');
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+  erro.style.display = 'none';
+  try {
+    const r = await fetch(API + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        login: document.getElementById('login').value,
+        senha: document.getElementById('senha').value,
+      }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Login falhou');
+    token = data.token;
+    usuario = data.usuario;
+    localStorage.setItem('token', token);
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+    entrarNoApp();
+  } catch (err) {
+    erro.textContent = err.message;
+    erro.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  }
+});
+
+function entrarNoApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('ativo');
+  document.getElementById('user-info').innerHTML = '<strong>' + usuario.nome + '</strong><br>' + usuario.perfil;
+  if (usuario.perfil === 'ADMIN') {
+    document.getElementById('link-usuarios').style.display = 'block';
+  }
+  carregarPagina('dashboard');
+}
+
+function sair() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('usuario');
+  token = null; usuario = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').classList.remove('ativo');
+}
+
+document.getElementById('btn-sair').addEventListener('click', sair);
+
+// ───── navegação ─────
+document.querySelectorAll('.sidebar nav a[data-pagina]').forEach((a) => {
+  a.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar nav a').forEach((x) => x.classList.remove('ativo'));
+    a.classList.add('ativo');
+    carregarPagina(a.dataset.pagina);
+  });
+});
+
+async function carregarPagina(pagina) {
+  const main = document.getElementById('main-content');
+  main.innerHTML = '<p>Carregando…</p>';
+  try {
+    if (pagina === 'dashboard')   await pageDashboard(main);
+    else if (pagina === 'alunos')      await pageAlunos(main);
+    else if (pagina === 'turmas')      await pageTurmas(main);
+    else if (pagina === 'ocorrencias') await pageOcorrencias(main);
+    else if (pagina === 'usuarios')    await pageUsuarios(main);
+  } catch (err) {
+    main.innerHTML = '<div class="erro">' + err.message + '</div>';
+  }
+}
+
+// ───── páginas ─────
+async function pageDashboard(main) {
+  const d = await api('/dashboard');
+  main.innerHTML = `
+    <h1>📊 Dashboard</h1>
+    <div class="stats">
+      <div class="card"><div class="label">Turmas ativas</div><div class="valor">${d.stats.turmas}</div></div>
+      <div class="card"><div class="label">Alunos ativos</div><div class="valor">${d.stats.alunos}</div></div>
+      <div class="card"><div class="label">Ocorrências (ano)</div><div class="valor">${d.stats.ocorrencias_ano}</div></div>
+      <div class="card"><div class="label">Em aberto</div><div class="valor">${d.stats.em_aberto}</div></div>
+    </div>
+
+    <h2 style="margin: 25px 0 12px; color: #4a5568; font-size: 18px;">🔍 Busca rápida</h2>
+    <div class="toolbar">
+      <input type="text" id="busca-aluno" placeholder="Digite o nome ou matrícula do aluno...">
+    </div>
+    <div id="resultados-busca"></div>
+
+    <h2 style="margin: 25px 0 12px; color: #4a5568; font-size: 18px;">📋 Ocorrências recentes</h2>
+    <table>
+      <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Status</th></tr></thead>
+      <tbody>
+        ${d.recentes.map(o => `
+          <tr>
+            <td>${formatData(o.data_ocorrencia)}</td>
+            <td>${o.aluno_nome}</td>
+            <td>${o.turma_nome}</td>
+            <td>${o.tipo}</td>
+            <td>${badge('gravidade', o.gravidade)}</td>
+            <td>${badge('status', o.status)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+  let timer;
+  document.getElementById('busca-aluno').addEventListener('input', (e) => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const q = e.target.value.trim();
+      const div = document.getElementById('resultados-busca');
+      if (q.length < 2) { div.innerHTML = ''; return; }
+      const alunos = await api('/dashboard/busca?q=' + encodeURIComponent(q));
+      if (!alunos.length) { div.innerHTML = '<p style="color:#a0aec0">Nenhum aluno encontrado.</p>'; return; }
+      div.innerHTML = alunos.map(a => `
+        <div class="historico-item" style="cursor:pointer" onclick="verHistorico(${a.id}, '${a.nome.replace(/'/g, "\\'")}')">
+          <strong>${a.nome}</strong> — Matrícula ${a.matricula} — Turma ${a.turma_nome}
+          <span style="float:right; color:#667eea; font-weight:600">${a.total_ocorrencias} ocorrência(s)</span>
+        </div>
+      `).join('');
+    }, 300);
+  });
+}
+
+window.verHistorico = async function (alunoId, alunoNome) {
+  const main = document.getElementById('main-content');
+  const historico = await api('/alunos/' + alunoId + '/historico');
+  main.innerHTML = `
+    <h1>📜 Histórico — ${alunoNome}</h1>
+    <button class="btn-small" onclick="carregarPagina('dashboard')">← Voltar</button>
+    <div style="margin-top: 20px;">
+      ${historico.length === 0 ? '<p>Sem ocorrências registradas.</p>' :
+        historico.map(o => `
+          <div class="historico-item">
+            <div class="data">${formatData(o.data_ocorrencia)} · ${badge('gravidade', o.gravidade)} ${badge('status', o.status)}</div>
+            <div class="tipo">${o.tipo}</div>
+            <div>${o.descricao}</div>
+            ${o.medida_aplicada ? '<div style="margin-top:6px;color:#4a5568;font-size:13px"><strong>Medida:</strong> ' + o.medida_aplicada + '</div>' : ''}
+            ${o.registrado_por_nome ? '<div style="color:#a0aec0;font-size:12px;margin-top:4px">Registrado por: ' + o.registrado_por_nome + '</div>' : ''}
+          </div>
+        `).join('')
+      }
+    </div>
+  `;
+};
+
+async function pageAlunos(main) {
+  const alunos = await api('/alunos');
+  main.innerHTML = `
+    <h1>👨‍🎓 Alunos</h1>
+    <table>
+      <thead><tr><th>Matrícula</th><th>Nome</th><th>Turma</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        ${alunos.map(a => `
+          <tr>
+            <td>${a.matricula}</td><td>${a.nome}</td><td>${a.turma_nome}</td><td>${a.status}</td>
+            <td><button class="btn-small" onclick="verHistorico(${a.id}, '${a.nome.replace(/'/g, "\\'")}')">Histórico</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+async function pageTurmas(main) {
+  const turmas = await api('/turmas');
+  main.innerHTML = `
+    <h1>🏫 Turmas</h1>
+    <table>
+      <thead><tr><th>Nome</th><th>Série</th><th>Turno</th><th>Ano</th><th>Professor</th><th>Alunos</th><th>Status</th></tr></thead>
+      <tbody>
+        ${turmas.map(t => `
+          <tr><td><strong>${t.nome}</strong></td><td>${t.serie}</td><td>${t.turno}</td><td>${t.ano_letivo}</td>
+            <td>${t.professor_responsavel || '-'}</td><td>${t.total_alunos}</td><td>${t.status}</td></tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+async function pageOcorrencias(main) {
+  const ocs = await api('/ocorrencias');
+  main.innerHTML = `
+    <h1>⚠️ Ocorrências</h1>
+    <table>
+      <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Medida</th><th>Status</th></tr></thead>
+      <tbody>
+        ${ocs.map(o => `
+          <tr>
+            <td>${formatData(o.data_ocorrencia)}</td><td>${o.aluno_nome}</td><td>${o.turma_nome}</td>
+            <td>${o.tipo}</td><td>${badge('gravidade', o.gravidade)}</td>
+            <td>${o.medida_aplicada || '-'}</td><td>${badge('status', o.status)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+async function pageUsuarios(main) {
+  const us = await api('/usuarios');
+  main.innerHTML = `
+    <h1>👥 Usuários</h1>
+    <table>
+      <thead><tr><th>Login</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Ativo</th><th>Último acesso</th></tr></thead>
+      <tbody>
+        ${us.map(u => `
+          <tr><td>${u.login}</td><td>${u.nome}</td><td>${u.email || '-'}</td>
+            <td><span class="badge badge-leve">${u.perfil}</span></td>
+            <td>${u.ativo ? '✅' : '❌'}</td>
+            <td>${u.ultimo_acesso ? formatData(u.ultimo_acesso) : 'Nunca'}</td></tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+window.carregarPagina = carregarPagina;
+
+// auto-login se já existe token
+if (token && usuario) entrarNoApp();
+</script>
+</body>
+</html>
