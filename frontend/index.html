@@ -5,539 +5,1199 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sistema Disciplinar Escolar</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-  body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-  .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-  .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px; }
-  .login-box h1 { color: #4a5568; text-align: center; margin-bottom: 8px; font-size: 24px; }
-  .login-box .subtitle { text-align: center; color: #a0aec0; margin-bottom: 30px; font-size: 14px; }
-  .form-group { margin-bottom: 18px; }
-  .form-group label { display: block; color: #4a5568; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
-  .form-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border .2s; }
-  .form-group input:focus { outline: none; border-color: #667eea; }
-  .btn { width: 100%; padding: 13px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform .15s; }
-  .btn:hover { transform: translateY(-1px); }
-  .btn:disabled { opacity: .6; cursor: not-allowed; }
-  .erro { background: #fed7d7; color: #c53030; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
-  .credenciais { margin-top: 25px; padding: 15px; background: #f7fafc; border-radius: 8px; font-size: 12px; color: #4a5568; }
-  .credenciais strong { color: #2d3748; }
-
-  /* Dashboard */
-  .app { display: none; min-height: 100vh; background: #f7fafc; }
-  .app.ativo { display: flex; }
-  .sidebar { width: 240px; background: #2d3748; color: white; padding: 20px 0; }
-  .sidebar h2 { padding: 0 20px 20px; font-size: 16px; border-bottom: 1px solid #4a5568; }
-  .sidebar .user { padding: 15px 20px; font-size: 13px; color: #a0aec0; border-bottom: 1px solid #4a5568; }
-  .sidebar nav a { display: block; padding: 12px 20px; color: #e2e8f0; text-decoration: none; transition: background .15s; cursor: pointer; }
-  .sidebar nav a:hover, .sidebar nav a.ativo { background: #4a5568; }
-  .main { flex: 1; padding: 30px; overflow-y: auto; }
-  .main h1 { color: #2d3748; margin-bottom: 20px; font-size: 22px; }
-
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-  .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
-  .card .label { color: #a0aec0; font-size: 12px; text-transform: uppercase; }
-  .card .valor { color: #2d3748; font-size: 32px; font-weight: 700; margin-top: 5px; }
-
-  table { width: 100%; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
-  table th, table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #edf2f7; font-size: 14px; }
-  table th { background: #f7fafc; color: #4a5568; font-weight: 600; text-transform: uppercase; font-size: 11px; }
-  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-  .badge-leve { background: #c6f6d5; color: #22543d; }
-  .badge-media { background: #feebc8; color: #7b341e; }
-  .badge-grave { background: #fed7d7; color: #742a2a; }
-  .badge-gravissima { background: #2d3748; color: white; }
-  .badge-aberto { background: #bee3f8; color: #1e3a8a; }
-  .badge-concluido { background: #c6f6d5; color: #22543d; }
-
-  .toolbar { display: flex; gap: 10px; margin-bottom: 20px; }
-  .toolbar input { flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; }
-  .btn-small { padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
-
-  .historico-item { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #667eea; }
-  .historico-item .data { color: #a0aec0; font-size: 12px; }
-  .historico-item .tipo { font-weight: 600; color: #2d3748; margin: 4px 0; }
-
-
-/* ============================================
-   RESPONSIVIDADE - Tablet, Mobile e Pequenos
-   ============================================ */
-
-/* Botão de menu hambúrguer (visível só em mobile) */
-.menu-toggle {
-  display: none;
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  z-index: 1001;
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 8px;
-  background: #667eea;
-  color: #fff;
-  font-size: 22px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --azul:#1e3a8a;--azul-claro:#3b82f6;--verde:#16a34a;--vermelho:#dc2626;
+  --laranja:#f59e0b;--cinza:#6b7280;--cinza-claro:#f3f4f6;--branco:#fff;
+  --borda:#e5e7eb;--sombra:0 1px 3px rgba(0,0,0,.08);--sombra-md:0 4px 6px -1px rgba(0,0,0,.1);
+  --radius:8px;
 }
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb;color:#111827;min-height:100vh}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit;font-size:14px}
+a{color:var(--azul-claro);text-decoration:none}
+a:hover{text-decoration:underline}
 
-/* Overlay para fechar sidebar ao clicar fora */
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.5);
-  z-index: 998;
+/* Login */
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%)}
+.login-card{background:#fff;padding:40px;border-radius:12px;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);width:100%;max-width:400px}
+.login-card h1{color:var(--azul);font-size:24px;margin-bottom:8px;text-align:center}
+.login-card p{color:var(--cinza);text-align:center;margin-bottom:24px;font-size:14px}
+.login-card .form-group{margin-bottom:16px}
+.login-card label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#374151}
+.login-card input{width:100%;padding:10px 12px;border:1px solid var(--borda);border-radius:var(--radius);font-size:14px}
+.login-card input:focus{outline:none;border-color:var(--azul-claro);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.login-card button{width:100%;padding:12px;background:var(--azul);color:#fff;border-radius:var(--radius);font-weight:600;font-size:14px;margin-top:8px;transition:background .2s}
+.login-card button:hover:not(:disabled){background:#1e40af}
+.login-card button:disabled{opacity:.6;cursor:not-allowed}
+.login-hint{margin-top:20px;padding:12px;background:#eff6ff;border-radius:var(--radius);font-size:12px;color:#1e40af;line-height:1.5}
+
+/* Layout app */
+.app{display:none;min-height:100vh}
+.app.active{display:flex}
+.sidebar{width:260px;background:var(--azul);color:#fff;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .25s}
+.sidebar-header{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-header h2{font-size:16px;font-weight:700;line-height:1.3}
+.sidebar-header small{color:rgba(255,255,255,.7);font-size:11px}
+.sidebar-user{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1);font-size:13px}
+.sidebar-user b{display:block;font-weight:600}
+.sidebar-user .perfil{display:inline-block;margin-top:4px;padding:2px 8px;background:rgba(255,255,255,.15);border-radius:4px;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.sidebar nav{flex:1;padding:12px 0;overflow-y:auto}
+.sidebar nav a{display:flex;align-items:center;gap:10px;padding:12px 20px;color:#fff;font-size:14px;text-decoration:none;transition:background .15s;border-left:3px solid transparent}
+.sidebar nav a:hover{background:rgba(255,255,255,.08);text-decoration:none}
+.sidebar nav a.active{background:rgba(255,255,255,.12);border-left-color:#fff;font-weight:600}
+.sidebar nav a .icon{font-size:18px;width:24px;text-align:center}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.sidebar-footer button{width:100%;padding:10px;background:rgba(255,255,255,.1);color:#fff;border-radius:var(--radius);font-size:13px;font-weight:600}
+.sidebar-footer button:hover{background:rgba(255,255,255,.2)}
+
+.main{flex:1;margin-left:260px;padding:24px 32px}
+.main-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.main-header h1{font-size:22px;color:#111827}
+.main-header .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius);font-size:13px;font-weight:600;transition:all .15s;border:1px solid transparent}
+.btn-primary{background:var(--azul);color:#fff}
+.btn-primary:hover{background:#1e40af}
+.btn-secondary{background:#fff;color:#374151;border-color:var(--borda)}
+.btn-secondary:hover{background:#f9fafb}
+.btn-success{background:var(--verde);color:#fff}
+.btn-success:hover{background:#15803d}
+.btn-danger{background:var(--vermelho);color:#fff}
+.btn-danger:hover{background:#b91c1c}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--sombra);padding:20px}
+.card-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:var(--radius);box-shadow:var(--sombra);padding:18px;border-left:4px solid var(--azul-claro)}
+.stat-card.verde{border-left-color:var(--verde)}
+.stat-card.laranja{border-left-color:var(--laranja)}
+.stat-card.vermelho{border-left-color:var(--vermelho)}
+.stat-card .label{font-size:12px;color:var(--cinza);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;font-weight:600}
+.stat-card .value{font-size:30px;font-weight:700;color:#111827}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;padding:14px;background:#fff;border-radius:var(--radius);box-shadow:var(--sombra)}
+.toolbar input,.toolbar select{padding:7px 10px;border:1px solid var(--borda);border-radius:6px;font-size:13px}
+.toolbar input{min-width:200px;flex:1;max-width:300px}
+
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--sombra)}
+table th{text-align:left;padding:12px 14px;background:#f9fafb;font-size:12px;color:#374151;font-weight:600;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--borda)}
+table td{padding:12px 14px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#111827}
+table tr:last-child td{border-bottom:none}
+table tr:hover{background:#f9fafb}
+.table-wrap{overflow-x:auto;margin-bottom:16px;border-radius:var(--radius)}
+
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.tag-leve{background:#dbeafe;color:#1e40af}
+.tag-media{background:#fef3c7;color:#92400e}
+.tag-grave{background:#fed7aa;color:#9a3412}
+.tag-gravissima{background:#fecaca;color:#991b1b}
+.tag-aberto{background:#fee2e2;color:#991b1b}
+.tag-em-analise{background:#fef3c7;color:#92400e}
+.tag-concluido{background:#d1fae5;color:#065f46}
+.tag-arquivado{background:#e5e7eb;color:#4b5563}
+.tag-ativa,.tag-ativo{background:#d1fae5;color:#065f46}
+.tag-inativa,.tag-evadido{background:#fee2e2;color:#991b1b}
+
+/* Modal */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.active{display:flex}
+.modal{background:#fff;border-radius:12px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px -12px rgba(0,0,0,.25)}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--borda);display:flex;justify-content:space-between;align-items:center}
+.modal-header h2{font-size:18px;color:#111827}
+.modal-close{font-size:24px;color:var(--cinza);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--cinza-claro)}
+.modal-body{padding:20px 24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--borda);display:flex;justify-content:flex-end;gap:8px}
+
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 11px;border:1px solid var(--borda);border-radius:6px;font-size:14px}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--azul-claro);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.form-group textarea{min-height:80px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-check{display:flex;align-items:center;gap:8px;font-size:13px}
+.form-check input{width:auto}
+
+/* Toast */
+.toast-container{position:fixed;top:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:380px}
+.toast{background:#fff;padding:12px 16px;border-radius:8px;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);font-size:13px;animation:slideIn .2s;pointer-events:auto;border-left:4px solid var(--azul-claro);min-width:260px}
+.toast.success{border-left-color:var(--verde)}
+.toast.error{border-left-color:var(--vermelho)}
+.toast.warn{border-left-color:var(--laranja)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+.loading{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-overlay{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--cinza)}
+.spinner-overlay::before{content:'';width:24px;height:24px;border:3px solid var(--cinza-claro);border-top-color:var(--azul);border-radius:50%;animation:spin .8s linear infinite;margin-right:10px}
+
+.empty{text-align:center;padding:40px;color:var(--cinza);background:#fff;border-radius:var(--radius)}
+.empty .icon{font-size:48px;opacity:.3;margin-bottom:12px}
+
+/* Hamburger / Sidebar mobile */
+.hamburger{display:none;position:fixed;top:14px;left:14px;z-index:60;background:var(--azul);color:#fff;width:42px;height:42px;border-radius:8px;align-items:center;justify-content:center;font-size:20px;box-shadow:var(--sombra-md)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40}
+.overlay.active{display:block}
+
+.page{display:none}
+.page.active{display:block}
+
+/* Histórico timeline */
+.aluno-perfil{background:#fff;padding:20px;border-radius:var(--radius);box-shadow:var(--sombra);margin-bottom:16px}
+.aluno-perfil h2{color:var(--azul);margin-bottom:10px}
+.aluno-perfil .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
+.aluno-perfil .info-item{font-size:13px}
+.aluno-perfil .info-item label{color:var(--cinza);font-size:11px;text-transform:uppercase;font-weight:600;display:block;margin-bottom:2px}
+.timeline{position:relative;padding-left:24px;border-left:2px solid var(--borda)}
+.timeline-item{position:relative;margin-bottom:18px;background:#fff;padding:14px;border-radius:var(--radius);box-shadow:var(--sombra)}
+.timeline-item::before{content:'';position:absolute;left:-31px;top:18px;width:14px;height:14px;border-radius:50%;background:var(--azul-claro);border:3px solid #fff;box-shadow:0 0 0 2px var(--borda)}
+.timeline-item.grave::before{background:var(--vermelho)}
+.timeline-item.gravissima::before{background:#7f1d1d}
+.timeline-item .data{font-size:12px;color:var(--cinza);margin-bottom:4px}
+.timeline-item .tipo{font-weight:600;margin-bottom:6px}
+.timeline-item .desc{font-size:13px;color:#374151;line-height:1.5}
+
+/* Relatórios */
+.relatorio-section{background:#fff;padding:20px;border-radius:var(--radius);box-shadow:var(--sombra);margin-bottom:16px}
+.relatorio-section h3{margin-bottom:12px;color:var(--azul);font-size:15px}
+.chart-bars{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.chart-bar{display:grid;grid-template-columns:140px 1fr 50px;align-items:center;gap:8px;font-size:13px}
+.chart-bar .bar{height:18px;background:var(--azul-claro);border-radius:4px;transition:width .4s}
+.chart-bar .bar.leve{background:#3b82f6}
+.chart-bar .bar.media{background:#f59e0b}
+.chart-bar .bar.grave{background:#ea580c}
+.chart-bar .bar.gravissima{background:#dc2626}
+
+.hidden{display:none !important}
+
+/* Responsive */
+@media (max-width:900px){
+  .card-grid{grid-template-columns:repeat(2,1fr)}
+  .main{padding:18px}
 }
-.sidebar-overlay.show { display: block; }
-
-/* ---------- TABLET (<= 900px) ---------- */
-@media (max-width: 900px) {
-  .stats { grid-template-columns: repeat(2, 1fr) !important; gap: 12px; }
-  .main { padding: 16px !important; }
-  table { font-size: 13px; }
-  .toolbar { flex-wrap: wrap; gap: 8px; }
-  .toolbar > * { min-width: 140px; }
+@media (max-width:768px){
+  .hamburger{display:flex}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:64px 14px 20px}
+  .main-header h1{font-size:18px}
+  .form-row{grid-template-columns:1fr}
+  table{font-size:12px}
+  table th,table td{padding:8px}
+  .toolbar input{min-width:0;max-width:none;width:100%}
 }
-
-/* ---------- MOBILE (<= 768px) ---------- */
-@media (max-width: 768px) {
-  /* Mostrar menu hambúrguer */
-  .menu-toggle { display: flex; align-items: center; justify-content: center; }
-
-  /* Sidebar vira drawer lateral */
-  .app { display: block !important; }
-  .sidebar {
-    position: fixed !important;
-    top: 0; left: 0;
-    height: 100vh;
-    width: 260px;
-    transform: translateX(-100%);
-    transition: transform .25s ease;
-    z-index: 999;
-    box-shadow: 2px 0 12px rgba(0,0,0,.15);
-    overflow-y: auto;
-  }
-  .sidebar.open { transform: translateX(0); }
-
-  .main {
-    margin-left: 0 !important;
-    padding: 64px 14px 20px !important;
-    width: 100%;
-  }
-
-  /* Login responsivo */
-  .login-box { width: 90% !important; max-width: 380px; padding: 24px !important; }
-
-  /* Stats em 2 colunas */
-  .stats { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
-  .card { padding: 14px !important; }
-  .card .valor, .valor { font-size: 22px !important; }
-
-  /* Tabelas: scroll horizontal suave */
-  table { font-size: 12px; }
-  .table-wrapper, .main table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
-  }
-  th, td { padding: 8px 10px !important; }
-
-  /* Toolbar empilhada */
-  .toolbar {
-    flex-direction: column;
-    align-items: stretch !important;
-  }
-  .toolbar > * { width: 100%; min-width: 0; }
-
-  /* Form groups full width */
-  .form-group input, .form-group select, .form-group textarea {
-    width: 100% !important;
-    box-sizing: border-box;
-  }
-
-  /* Botões com toque maior */
-  .btn { padding: 12px 16px !important; font-size: 15px; }
-  .btn-small { padding: 8px 12px !important; }
-
-  /* Histórico items */
-  .historico-item { padding: 12px !important; }
-
-  /* Modal full screen no mobile */
-  .modal-content, .modal-box {
-    width: 95% !important;
-    max-width: 95% !important;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
+@media (max-width:480px){
+  .card-grid{grid-template-columns:1fr}
+  .stat-card .value{font-size:24px}
+  .modal{max-height:100vh;border-radius:0}
 }
-
-/* ---------- MOBILE PEQUENO (<= 480px) ---------- */
-@media (max-width: 480px) {
-  .stats { grid-template-columns: 1fr !important; }
-  h1 { font-size: 20px !important; }
-  h2 { font-size: 17px !important; }
-  .login-box h1 { font-size: 22px !important; }
-  .subtitle { font-size: 13px !important; }
-  .credenciais { font-size: 12px; }
-  .badge { font-size: 10px !important; padding: 3px 6px !important; }
-}
-
-/* ---------- MOBILE MUITO PEQUENO (<= 360px) ---------- */
-@media (max-width: 360px) {
-  .main { padding: 60px 10px 16px !important; }
-  .login-box { padding: 18px !important; }
-  th, td { padding: 6px 8px !important; font-size: 11px; }
-}
-
 </style>
 </head>
 <body>
-<button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('show');">☰</button>
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('show');"></div>
-
 
 <!-- LOGIN -->
-<div id="login-screen" class="login-container">
-  <div class="login-box">
-    <h1>🏫 Sistema Disciplinar</h1>
-    <p class="subtitle">Controle de ocorrências e advertências</p>
-    <div id="erro-login" class="erro" style="display:none"></div>
-    <form id="form-login">
-      <div class="form-group">
-        <label>Usuário</label>
-        <input type="text" id="login" required autocomplete="username">
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" id="senha" required autocomplete="current-password">
-      </div>
-      <button type="submit" class="btn" id="btn-entrar">Entrar</button>
-    </form>
-    <div class="credenciais">
-      <strong>Credenciais de demonstração:</strong><br>
-      admin / escola123 (ADMIN)<br>
-      maria / prof123 (Professor)<br>
-      joao / coord123 (Coordenador)
+<div id="login" class="login-screen">
+  <form class="login-card" id="form-login">
+    <h1>Sistema Disciplinar Escolar</h1>
+    <p>Faça login para continuar</p>
+    <div class="form-group">
+      <label>Usuário</label>
+      <input type="text" id="login-user" required autocomplete="username" value="admin">
     </div>
-  </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="login-pass" required autocomplete="current-password" value="escola123">
+    </div>
+    <button type="submit" id="btn-login">Entrar</button>
+    <div class="login-hint">
+      <b>Usuários de teste:</b><br>
+      admin / escola123 (Administrador)<br>
+      joao / coord123 (Coordenador)<br>
+      maria / prof123 (Professor)
+    </div>
+  </form>
 </div>
 
 <!-- APP -->
 <div id="app" class="app">
-  <aside class="sidebar">
-    <h2>Sistema Disciplinar</h2>
-    <div class="user" id="user-info"></div>
-    <nav>
-      <a data-pagina="dashboard" class="ativo">📊 Dashboard</a>
-      <a data-pagina="alunos">👨‍🎓 Alunos</a>
-      <a data-pagina="turmas">🏫 Turmas</a>
-      <a data-pagina="ocorrencias">⚠️ Ocorrências</a>
-      <a data-pagina="usuarios" id="link-usuarios" style="display:none">👥 Usuários</a>
-      <a id="btn-sair" style="margin-top: 30px; color: #fc8181;">🚪 Sair</a>
+  <button class="hamburger" id="btn-hamburger" aria-label="Menu">☰</button>
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Sistema Disciplinar</h2>
+      <small>Gestão Escolar</small>
+    </div>
+    <div class="sidebar-user">
+      <b id="user-nome">—</b>
+      <span class="perfil" id="user-perfil">—</span>
+    </div>
+    <nav id="nav">
+      <a href="#dashboard" class="active" data-page="dashboard"><span class="icon">📊</span> Dashboard</a>
+      <a href="#turmas" data-page="turmas" data-roles="ADMIN,COORDENADOR"><span class="icon">🏫</span> Turmas</a>
+      <a href="#alunos" data-page="alunos"><span class="icon">👨‍🎓</span> Alunos</a>
+      <a href="#ocorrencias" data-page="ocorrencias"><span class="icon">📋</span> Ocorrências</a>
+      <a href="#relatorios" data-page="relatorios"><span class="icon">📈</span> Relatórios</a>
+      <a href="#usuarios" data-page="usuarios" data-roles="ADMIN"><span class="icon">👥</span> Usuários</a>
     </nav>
+    <div class="sidebar-footer">
+      <button id="btn-logout">Sair</button>
+    </div>
   </aside>
-  <main class="main" id="main-content">
-    <p>Carregando…</p>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section id="page-dashboard" class="page active">
+      <div class="main-header">
+        <h1>Dashboard</h1>
+      </div>
+      <div class="card-grid" id="cards-stats"></div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;color:var(--azul)">Últimas Ocorrências</h3>
+        <div id="tabela-recentes" class="table-wrap"></div>
+      </div>
+    </section>
+
+    <!-- TURMAS -->
+    <section id="page-turmas" class="page">
+      <div class="main-header">
+        <h1>Turmas</h1>
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-nova-turma" data-roles="ADMIN">+ Nova Turma</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <input type="text" id="busca-turma" placeholder="Buscar por nome ou série...">
+        <select id="filtro-turno-turma">
+          <option value="">Todos os turnos</option>
+          <option value="MANHA">Manhã</option>
+          <option value="TARDE">Tarde</option>
+          <option value="NOITE">Noite</option>
+          <option value="INTEGRAL">Integral</option>
+        </select>
+      </div>
+      <div id="tabela-turmas" class="table-wrap"></div>
+    </section>
+
+    <!-- ALUNOS -->
+    <section id="page-alunos" class="page">
+      <div class="main-header">
+        <h1>Alunos</h1>
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-novo-aluno" data-roles="ADMIN,COORDENADOR">+ Novo Aluno</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <input type="text" id="busca-aluno" placeholder="Buscar por nome ou matrícula...">
+        <select id="filtro-turma-aluno"><option value="">Todas as turmas</option></select>
+        <select id="filtro-status-aluno">
+          <option value="">Todos os status</option>
+          <option value="ATIVO" selected>Ativos</option>
+          <option value="TRANSFERIDO">Transferidos</option>
+          <option value="EVADIDO">Evadidos</option>
+          <option value="CONCLUIDO">Concluídos</option>
+        </select>
+      </div>
+      <div id="tabela-alunos" class="table-wrap"></div>
+    </section>
+
+    <!-- HISTORICO ALUNO -->
+    <section id="page-aluno-perfil" class="page">
+      <div class="main-header">
+        <h1 id="perfil-titulo">Histórico do Aluno</h1>
+        <div class="actions">
+          <button class="btn btn-secondary" onclick="App.showPage('alunos')">← Voltar</button>
+          <button class="btn btn-primary" id="btn-imprimir-perfil">🖨 Imprimir</button>
+        </div>
+      </div>
+      <div id="aluno-perfil-conteudo"></div>
+    </section>
+
+    <!-- OCORRENCIAS -->
+    <section id="page-ocorrencias" class="page">
+      <div class="main-header">
+        <h1>Ocorrências</h1>
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-nova-ocorrencia">+ Registrar Ocorrência</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <input type="text" id="busca-ocorrencia" placeholder="Buscar por aluno, tipo ou descrição...">
+        <select id="filtro-gravidade-oc">
+          <option value="">Todas gravidades</option>
+          <option value="LEVE">Leve</option>
+          <option value="MEDIA">Média</option>
+          <option value="GRAVE">Grave</option>
+          <option value="GRAVISSIMA">Gravíssima</option>
+        </select>
+        <select id="filtro-status-oc">
+          <option value="">Todos os status</option>
+          <option value="ABERTO">Em aberto</option>
+          <option value="EM_ANALISE">Em análise</option>
+          <option value="CONCLUIDO">Concluído</option>
+          <option value="ARQUIVADO">Arquivado</option>
+        </select>
+        <input type="date" id="filtro-data-inicio" title="Data inicial">
+        <input type="date" id="filtro-data-fim" title="Data final">
+      </div>
+      <div id="tabela-ocorrencias" class="table-wrap"></div>
+    </section>
+
+    <!-- RELATORIOS -->
+    <section id="page-relatorios" class="page">
+      <div class="main-header">
+        <h1>Relatórios</h1>
+        <div class="actions">
+          <button class="btn btn-secondary" id="btn-exportar-csv">⬇ Exportar CSV</button>
+          <button class="btn btn-secondary" id="btn-imprimir-rel">🖨 Imprimir</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <select id="rel-turma"><option value="">Todas as turmas</option></select>
+        <select id="rel-gravidade">
+          <option value="">Todas gravidades</option>
+          <option value="LEVE">Leve</option>
+          <option value="MEDIA">Média</option>
+          <option value="GRAVE">Grave</option>
+          <option value="GRAVISSIMA">Gravíssima</option>
+        </select>
+        <input type="date" id="rel-data-inicio" title="Data inicial">
+        <input type="date" id="rel-data-fim" title="Data final">
+        <button class="btn btn-primary" id="btn-gerar-relatorio">Gerar Relatório</button>
+      </div>
+      <div id="relatorio-resultado"></div>
+    </section>
+
+    <!-- USUARIOS -->
+    <section id="page-usuarios" class="page">
+      <div class="main-header">
+        <h1>Usuários do Sistema</h1>
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-novo-usuario">+ Novo Usuário</button>
+        </div>
+      </div>
+      <div id="tabela-usuarios" class="table-wrap"></div>
+    </section>
+
   </main>
 </div>
 
+<!-- Modal genérico -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-titulo">Título</h2>
+      <button class="modal-close" id="modal-close">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-container" id="toasts"></div>
+
 <script>
-    const API = 'https://sistema-disciplinar-escolar.onrender.com/api';
-let token = localStorage.getItem('token');
-let usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+const API = 'https://sistema-disciplinar-escolar.onrender.com/api';
 
-// ───── helpers ─────
-async function api(path, opts = {}) {
-  const res = await fetch(API + path, {
-    ...opts,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-      ...(opts.headers || {}),
-    },
-  });
-  if (res.status === 401) {
-    sair();
-    throw new Error('Sessão expirada');
-  }
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Erro ' + res.status }));
-    throw new Error(err.error || 'Erro na requisição');
-  }
-  return res.json();
-}
+const App = {
+  token: null,
+  usuario: null,
+  turmasCache: [],
+  alunosCache: [],
 
-function badge(tipo, valor) {
-  return '<span class="badge badge-' + valor.toLowerCase() + '">' + valor + '</span>';
-}
+  init() {
+    this.token = localStorage.getItem('token');
+    this.usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+    if (this.token && this.usuario) this.showApp();
+    else this.showLogin();
+    this.bindGlobal();
+  },
 
-function formatData(d) {
-  if (!d) return '-';
-  const [a, m, dia] = d.substring(0, 10).split('-');
-  return dia + '/' + m + '/' + a;
-}
-
-// ───── login ─────
-document.getElementById('form-login').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = document.getElementById('btn-entrar');
-  const erro = document.getElementById('erro-login');
-  btn.disabled = true;
-  btn.textContent = 'Entrando...';
-  erro.style.display = 'none';
-  try {
-    const r = await fetch(API + '/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        login: document.getElementById('login').value,
-        senha: document.getElementById('senha').value,
-      }),
+  bindGlobal() {
+    document.getElementById('form-login').addEventListener('submit', (e) => this.login(e));
+    document.getElementById('btn-logout').addEventListener('click', () => this.logout());
+    document.getElementById('btn-hamburger').addEventListener('click', () => this.toggleSidebar());
+    document.getElementById('overlay').addEventListener('click', () => this.toggleSidebar(false));
+    document.getElementById('modal-close').addEventListener('click', () => this.closeModal());
+    document.getElementById('modal-backdrop').addEventListener('click', (e) => { if (e.target.id==='modal-backdrop') this.closeModal(); });
+    document.querySelectorAll('#nav a').forEach(a => {
+      a.addEventListener('click', (e) => { e.preventDefault(); this.showPage(a.dataset.page); this.toggleSidebar(false); });
     });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Login falhou');
-    token = data.token;
-    usuario = data.usuario;
-    localStorage.setItem('token', token);
-    localStorage.setItem('usuario', JSON.stringify(usuario));
-    entrarNoApp();
-  } catch (err) {
-    erro.textContent = err.message;
-    erro.style.display = 'block';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Entrar';
-  }
-});
 
-function entrarNoApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').classList.add('ativo');
-  document.getElementById('user-info').innerHTML = '<strong>' + usuario.nome + '</strong><br>' + usuario.perfil;
-  if (usuario.perfil === 'ADMIN') {
-    document.getElementById('link-usuarios').style.display = 'block';
-  }
-  carregarPagina('dashboard');
-}
+    // Turmas
+    document.getElementById('btn-nova-turma').addEventListener('click', () => this.modalTurma());
+    document.getElementById('busca-turma').addEventListener('input', () => this.renderTurmas());
+    document.getElementById('filtro-turno-turma').addEventListener('change', () => this.renderTurmas());
 
-function sair() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('usuario');
-  token = null; usuario = null;
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').classList.remove('ativo');
-}
+    // Alunos
+    document.getElementById('btn-novo-aluno').addEventListener('click', () => this.modalAluno());
+    document.getElementById('busca-aluno').addEventListener('input', () => this.loadAlunos());
+    document.getElementById('filtro-turma-aluno').addEventListener('change', () => this.loadAlunos());
+    document.getElementById('filtro-status-aluno').addEventListener('change', () => this.loadAlunos());
 
-document.getElementById('btn-sair').addEventListener('click', sair);
+    // Ocorrências
+    document.getElementById('btn-nova-ocorrencia').addEventListener('click', () => this.modalOcorrencia());
+    document.getElementById('busca-ocorrencia').addEventListener('input', () => this.debouncedLoadOcorrencias());
+    document.getElementById('filtro-gravidade-oc').addEventListener('change', () => this.loadOcorrencias());
+    document.getElementById('filtro-status-oc').addEventListener('change', () => this.loadOcorrencias());
+    document.getElementById('filtro-data-inicio').addEventListener('change', () => this.loadOcorrencias());
+    document.getElementById('filtro-data-fim').addEventListener('change', () => this.loadOcorrencias());
 
-// ───── navegação ─────
-document.querySelectorAll('.sidebar nav a[data-pagina]').forEach((a) => {
-  a.addEventListener('click', () => {
-    document.querySelectorAll('.sidebar nav a').forEach((x) => x.classList.remove('ativo'));
-    a.classList.add('ativo');
-    carregarPagina(a.dataset.pagina);
-  });
-});
+    // Relatórios
+    document.getElementById('btn-gerar-relatorio').addEventListener('click', () => this.gerarRelatorio());
+    document.getElementById('btn-exportar-csv').addEventListener('click', () => this.exportarCSV());
+    document.getElementById('btn-imprimir-rel').addEventListener('click', () => window.print());
+    document.getElementById('btn-imprimir-perfil').addEventListener('click', () => window.print());
 
-async function carregarPagina(pagina) {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '<p>Carregando…</p>';
-  try {
-    if (pagina === 'dashboard')   await pageDashboard(main);
-    else if (pagina === 'alunos')      await pageAlunos(main);
-    else if (pagina === 'turmas')      await pageTurmas(main);
-    else if (pagina === 'ocorrencias') await pageOcorrencias(main);
-    else if (pagina === 'usuarios')    await pageUsuarios(main);
-  } catch (err) {
-    main.innerHTML = '<div class="erro">' + err.message + '</div>';
-  }
-}
+    // Usuários
+    document.getElementById('btn-novo-usuario').addEventListener('click', () => this.modalUsuario());
 
-// ───── páginas ─────
-async function pageDashboard(main) {
-  const d = await api('/dashboard');
-  main.innerHTML = `
-    <h1>📊 Dashboard</h1>
-    <div class="stats">
-      <div class="card"><div class="label">Turmas ativas</div><div class="valor">${d.stats.turmas}</div></div>
-      <div class="card"><div class="label">Alunos ativos</div><div class="valor">${d.stats.alunos}</div></div>
-      <div class="card"><div class="label">Ocorrências (ano)</div><div class="valor">${d.stats.ocorrencias_ano}</div></div>
-      <div class="card"><div class="label">Em aberto</div><div class="valor">${d.stats.em_aberto}</div></div>
-    </div>
+    this._debounceTimer = null;
+  },
 
-    <h2 style="margin: 25px 0 12px; color: #4a5568; font-size: 18px;">🔍 Busca rápida</h2>
-    <div class="toolbar">
-      <input type="text" id="busca-aluno" placeholder="Digite o nome ou matrícula do aluno...">
-    </div>
-    <div id="resultados-busca"></div>
+  debouncedLoadOcorrencias() {
+    clearTimeout(this._debounceTimer);
+    this._debounceTimer = setTimeout(() => this.loadOcorrencias(), 350);
+  },
 
-    <h2 style="margin: 25px 0 12px; color: #4a5568; font-size: 18px;">📋 Ocorrências recentes</h2>
-    <table>
-      <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Status</th></tr></thead>
-      <tbody>
-        ${d.recentes.map(o => `
-          <tr>
-            <td>${formatData(o.data_ocorrencia)}</td>
-            <td>${o.aluno_nome}</td>
-            <td>${o.turma_nome}</td>
-            <td>${o.tipo}</td>
-            <td>${badge('gravidade', o.gravidade)}</td>
-            <td>${badge('status', o.status)}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
+  // === UI Utils ===
+  toggleSidebar(force) {
+    const sb = document.getElementById('sidebar'), ov = document.getElementById('overlay');
+    const open = force !== undefined ? force : !sb.classList.contains('open');
+    sb.classList.toggle('open', open);
+    ov.classList.toggle('active', open);
+  },
 
-  let timer;
-  document.getElementById('busca-aluno').addEventListener('input', (e) => {
-    clearTimeout(timer);
-    timer = setTimeout(async () => {
-      const q = e.target.value.trim();
-      const div = document.getElementById('resultados-busca');
-      if (q.length < 2) { div.innerHTML = ''; return; }
-      const alunos = await api('/dashboard/busca?q=' + encodeURIComponent(q));
-      if (!alunos.length) { div.innerHTML = '<p style="color:#a0aec0">Nenhum aluno encontrado.</p>'; return; }
-      div.innerHTML = alunos.map(a => `
-        <div class="historico-item" style="cursor:pointer" onclick="verHistorico(${a.id}, '${a.nome.replace(/'/g, "\\'")}')">
-          <strong>${a.nome}</strong> — Matrícula ${a.matricula} — Turma ${a.turma_nome}
-          <span style="float:right; color:#667eea; font-weight:600">${a.total_ocorrencias} ocorrência(s)</span>
-        </div>
-      `).join('');
-    }, 300);
-  });
-}
+  toast(msg, type = 'info') {
+    const t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.textContent = msg;
+    document.getElementById('toasts').appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  },
 
-window.verHistorico = async function (alunoId, alunoNome) {
-  const main = document.getElementById('main-content');
-  const historico = await api('/alunos/' + alunoId + '/historico');
-  main.innerHTML = `
-    <h1>📜 Histórico — ${alunoNome}</h1>
-    <button class="btn-small" onclick="carregarPagina('dashboard')">← Voltar</button>
-    <div style="margin-top: 20px;">
-      ${historico.length === 0 ? '<p>Sem ocorrências registradas.</p>' :
-        historico.map(o => `
-          <div class="historico-item">
-            <div class="data">${formatData(o.data_ocorrencia)} · ${badge('gravidade', o.gravidade)} ${badge('status', o.status)}</div>
-            <div class="tipo">${o.tipo}</div>
-            <div>${o.descricao}</div>
-            ${o.medida_aplicada ? '<div style="margin-top:6px;color:#4a5568;font-size:13px"><strong>Medida:</strong> ' + o.medida_aplicada + '</div>' : ''}
-            ${o.registrado_por_nome ? '<div style="color:#a0aec0;font-size:12px;margin-top:4px">Registrado por: ' + o.registrado_por_nome + '</div>' : ''}
-          </div>
-        `).join('')
+  openModal(titulo, body, footer = '') {
+    document.getElementById('modal-titulo').textContent = titulo;
+    document.getElementById('modal-body').innerHTML = body;
+    document.getElementById('modal-footer').innerHTML = footer;
+    document.getElementById('modal-backdrop').classList.add('active');
+  },
+  closeModal() {
+    document.getElementById('modal-backdrop').classList.remove('active');
+  },
+
+  confirmar(msg) {
+    return new Promise((resolve) => {
+      this.openModal('Confirmação',
+        '<p style="font-size:14px;line-height:1.6">' + msg + '</p>',
+        '<button class="btn btn-secondary" id="cf-no">Cancelar</button>' +
+        '<button class="btn btn-danger" id="cf-yes">Confirmar</button>');
+      document.getElementById('cf-no').onclick = () => { this.closeModal(); resolve(false); };
+      document.getElementById('cf-yes').onclick = () => { this.closeModal(); resolve(true); };
+    });
+  },
+
+  // === API ===
+  async api(path, opts = {}) {
+    opts.headers = opts.headers || {};
+    if (this.token) opts.headers.Authorization = 'Bearer ' + this.token;
+    if (opts.body && typeof opts.body !== 'string') {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(opts.body);
+    }
+    const r = await fetch(API + path, opts);
+    if (r.status === 401) { this.logout(); throw new Error('Sessão expirada'); }
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || 'Erro na requisição');
+    return data;
+  },
+
+  // === Auth ===
+  async login(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-login');
+    btn.disabled = true; btn.innerHTML = '<span class="loading"></span> Entrando...';
+    try {
+      const data = await this.api('/auth/login', {
+        method: 'POST',
+        body: {
+          login: document.getElementById('login-user').value,
+          senha: document.getElementById('login-pass').value,
+        },
+      });
+      this.token = data.token;
+      this.usuario = data.usuario;
+      localStorage.setItem('token', this.token);
+      localStorage.setItem('usuario', JSON.stringify(this.usuario));
+      this.showApp();
+      this.toast('Bem-vindo, ' + this.usuario.nome, 'success');
+    } catch (err) {
+      this.toast(err.message, 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Entrar';
+    }
+  },
+
+  logout() {
+    localStorage.clear();
+    this.token = null; this.usuario = null;
+    this.showLogin();
+  },
+
+  showLogin() {
+    document.getElementById('login').style.display = 'flex';
+    document.getElementById('app').classList.remove('active');
+  },
+
+  showApp() {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').classList.add('active');
+    document.getElementById('user-nome').textContent = this.usuario.nome;
+    document.getElementById('user-perfil').textContent = this.usuario.perfil;
+    this.applyPermissions();
+    this.showPage('dashboard');
+  },
+
+  applyPermissions() {
+    const perfil = this.usuario.perfil;
+    document.querySelectorAll('[data-roles]').forEach(el => {
+      const roles = el.dataset.roles.split(',');
+      el.style.display = roles.includes(perfil) ? '' : 'none';
+    });
+  },
+
+  showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('active', a.dataset.page === name));
+    const target = document.getElementById('page-' + name);
+    if (target) target.classList.add('active');
+    const loaders = {
+      'dashboard': () => this.loadDashboard(),
+      'turmas': () => this.loadTurmas(),
+      'alunos': () => this.loadAlunos(),
+      'ocorrencias': () => this.loadOcorrencias(),
+      'relatorios': () => this.loadRelatoriosPage(),
+      'usuarios': () => this.loadUsuarios(),
+    };
+    if (loaders[name]) loaders[name]();
+  },
+
+  // === DASHBOARD ===
+  async loadDashboard() {
+    try {
+      const d = await this.api('/dashboard');
+      const s = d.stats;
+      document.getElementById('cards-stats').innerHTML = `
+        <div class="stat-card"><div class="label">Turmas Ativas</div><div class="value">${s.turmas}</div></div>
+        <div class="stat-card verde"><div class="label">Alunos Ativos</div><div class="value">${s.alunos}</div></div>
+        <div class="stat-card laranja"><div class="label">Ocorrências (ano)</div><div class="value">${s.ocorrencias_ano}</div></div>
+        <div class="stat-card vermelho"><div class="label">Em Aberto</div><div class="value">${s.em_aberto}</div></div>
+      `;
+      const recentes = d.recentes;
+      if (!recentes.length) {
+        document.getElementById('tabela-recentes').innerHTML = '<div class="empty">Nenhuma ocorrência registrada ainda.</div>';
+        return;
       }
-    </div>
-  `;
+      document.getElementById('tabela-recentes').innerHTML = `
+        <table>
+          <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Status</th></tr></thead>
+          <tbody>${recentes.map(r => `
+            <tr><td>${this.fmtData(r.data_ocorrencia)}</td><td>${r.aluno_nome}</td><td>${r.turma_nome}</td><td>${r.tipo}</td><td>${this.tagGravidade(r.gravidade)}</td><td>${this.tagStatus(r.status)}</td></tr>
+          `).join('')}</tbody>
+        </table>`;
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  // === TURMAS ===
+  async loadTurmas() {
+    document.getElementById('tabela-turmas').innerHTML = '<div class="spinner-overlay">Carregando turmas...</div>';
+    try {
+      this.turmasCache = await this.api('/turmas');
+      this.populateSelectsTurmas();
+      this.renderTurmas();
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  populateSelectsTurmas() {
+    const opts = '<option value="">Selecione...</option>' + this.turmasCache
+      .filter(t => t.status === 'ATIVA')
+      .map(t => `<option value="${t.id}">${t.nome} - ${t.serie} (${t.turno})</option>`).join('');
+    const optsAll = '<option value="">Todas as turmas</option>' + this.turmasCache
+      .map(t => `<option value="${t.id}">${t.nome} - ${t.serie}</option>`).join('');
+    const ft = document.getElementById('filtro-turma-aluno');
+    const rt = document.getElementById('rel-turma');
+    if (ft) ft.innerHTML = optsAll;
+    if (rt) rt.innerHTML = optsAll;
+  },
+
+  renderTurmas() {
+    const busca = document.getElementById('busca-turma').value.toLowerCase();
+    const turno = document.getElementById('filtro-turno-turma').value;
+    let lista = this.turmasCache.filter(t =>
+      (!busca || t.nome.toLowerCase().includes(busca) || (t.serie||'').toLowerCase().includes(busca))
+      && (!turno || t.turno === turno));
+    if (!lista.length) {
+      document.getElementById('tabela-turmas').innerHTML = '<div class="empty"><div class="icon">🏫</div>Nenhuma turma encontrada.</div>';
+      return;
+    }
+    const isAdmin = this.usuario.perfil === 'ADMIN';
+    document.getElementById('tabela-turmas').innerHTML = `
+      <table>
+        <thead><tr><th>Nome</th><th>Série</th><th>Turno</th><th>Ano</th><th>Prof. Responsável</th><th>Alunos</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody>${lista.map(t => `
+          <tr>
+            <td><b>${t.nome}</b></td><td>${t.serie}</td><td>${t.turno}</td><td>${t.ano_letivo}</td>
+            <td>${t.professor_responsavel || '—'}</td><td>${t.total_alunos || 0}</td>
+            <td><span class="tag tag-${t.status.toLowerCase()}">${t.status}</span></td>
+            <td>
+              ${isAdmin ? `<button class="btn btn-sm btn-secondary" onclick="App.modalTurma(${t.id})">Editar</button>
+              <button class="btn btn-sm btn-danger" onclick="App.excluirTurma(${t.id})">Excluir</button>` : '—'}
+            </td>
+          </tr>`).join('')}</tbody>
+      </table>`;
+  },
+
+  modalTurma(id) {
+    const t = id ? this.turmasCache.find(x => x.id === id) : {};
+    const ano = new Date().getFullYear();
+    this.openModal(id ? 'Editar Turma' : 'Nova Turma', `
+      <form id="form-turma">
+        <div class="form-row">
+          <div class="form-group"><label>Nome *</label><input name="nome" required value="${t.nome||''}"></div>
+          <div class="form-group"><label>Série *</label><input name="serie" required value="${t.serie||''}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Turno *</label>
+            <select name="turno" required>
+              <option value="MANHA" ${t.turno==='MANHA'?'selected':''}>Manhã</option>
+              <option value="TARDE" ${t.turno==='TARDE'?'selected':''}>Tarde</option>
+              <option value="NOITE" ${t.turno==='NOITE'?'selected':''}>Noite</option>
+              <option value="INTEGRAL" ${t.turno==='INTEGRAL'?'selected':''}>Integral</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Ano Letivo *</label><input type="number" name="ano_letivo" required min="2000" max="2100" value="${t.ano_letivo||ano}"></div>
+        </div>
+        <div class="form-group"><label>Professor Responsável</label><input name="professor_responsavel" value="${t.professor_responsavel||''}"></div>
+        <div class="form-group"><label>Status</label>
+          <select name="status">
+            <option value="ATIVA" ${t.status==='ATIVA'?'selected':''}>Ativa</option>
+            <option value="INATIVA" ${t.status==='INATIVA'?'selected':''}>Inativa</option>
+            <option value="ENCERRADA" ${t.status==='ENCERRADA'?'selected':''}>Encerrada</option>
+          </select>
+        </div>
+      </form>
+    `,
+    '<button class="btn btn-secondary" onclick="App.closeModal()">Cancelar</button>' +
+    '<button class="btn btn-primary" id="btn-save-turma">Salvar</button>');
+    document.getElementById('btn-save-turma').onclick = () => this.saveTurma(id);
+  },
+
+  async saveTurma(id) {
+    const f = document.getElementById('form-turma');
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    const data = Object.fromEntries(new FormData(f));
+    data.ano_letivo = parseInt(data.ano_letivo);
+    const btn = document.getElementById('btn-save-turma');
+    btn.disabled = true; btn.innerHTML = '<span class="loading"></span> Salvando...';
+    try {
+      if (id) await this.api('/turmas/' + id, { method: 'PUT', body: data });
+      else await this.api('/turmas', { method: 'POST', body: data });
+      this.toast('Turma ' + (id ? 'atualizada' : 'criada') + ' com sucesso!', 'success');
+      this.closeModal();
+      this.loadTurmas();
+    } catch (err) { this.toast(err.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Salvar'; }
+  },
+
+  async excluirTurma(id) {
+    const t = this.turmasCache.find(x => x.id === id);
+    if (!await this.confirmar('Inativar a turma <b>' + t.nome + '</b>? Os alunos vinculados serão mantidos.')) return;
+    try {
+      await this.api('/turmas/' + id, { method: 'DELETE' });
+      this.toast('Turma inativada', 'success');
+      this.loadTurmas();
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  // === ALUNOS ===
+  async loadAlunos() {
+    document.getElementById('tabela-alunos').innerHTML = '<div class="spinner-overlay">Carregando alunos...</div>';
+    try {
+      if (!this.turmasCache.length) this.turmasCache = await this.api('/turmas');
+      this.populateSelectsTurmas();
+      const params = new URLSearchParams();
+      const busca = document.getElementById('busca-aluno').value;
+      const turma = document.getElementById('filtro-turma-aluno').value;
+      const status = document.getElementById('filtro-status-aluno').value;
+      if (busca) params.append('busca', busca);
+      if (turma) params.append('turma_id', turma);
+      if (status) params.append('status', status);
+      this.alunosCache = await this.api('/alunos?' + params);
+      this.renderAlunos();
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  renderAlunos() {
+    const lista = this.alunosCache;
+    if (!lista.length) {
+      document.getElementById('tabela-alunos').innerHTML = '<div class="empty"><div class="icon">👨‍🎓</div>Nenhum aluno encontrado.</div>';
+      return;
+    }
+    const pode = ['ADMIN','COORDENADOR'].includes(this.usuario.perfil);
+    const podeExc = this.usuario.perfil === 'ADMIN';
+    document.getElementById('tabela-alunos').innerHTML = `
+      <table>
+        <thead><tr><th>Matrícula</th><th>Nome</th><th>Turma</th><th>Responsável</th><th>Telefone</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody>${lista.map(a => `
+          <tr>
+            <td>${a.matricula}</td><td><b>${a.nome}</b></td>
+            <td>${a.turma_nome} (${a.turno})</td>
+            <td>${a.responsavel||'—'}</td><td>${a.telefone_responsavel||'—'}</td>
+            <td><span class="tag tag-${a.status.toLowerCase()}">${a.status}</span></td>
+            <td>
+              <button class="btn btn-sm btn-secondary" onclick="App.verHistorico(${a.id})">📋 Histórico</button>
+              ${pode ? `<button class="btn btn-sm btn-secondary" onclick="App.modalAluno(${a.id})">Editar</button>` : ''}
+              ${podeExc ? `<button class="btn btn-sm btn-danger" onclick="App.excluirAluno(${a.id})">Excluir</button>` : ''}
+            </td>
+          </tr>`).join('')}</tbody>
+      </table>`;
+  },
+
+  modalAluno(id) {
+    const a = id ? this.alunosCache.find(x => x.id === id) : {};
+    const turmaOpts = this.turmasCache.filter(t => t.status === 'ATIVA').map(t =>
+      `<option value="${t.id}" ${a.turma_id===t.id?'selected':''}>${t.nome} - ${t.serie} (${t.turno})</option>`).join('');
+    this.openModal(id ? 'Editar Aluno' : 'Novo Aluno', `
+      <form id="form-aluno">
+        <div class="form-row">
+          <div class="form-group"><label>Matrícula *</label><input name="matricula" required value="${a.matricula||''}"></div>
+          <div class="form-group"><label>Data de Nascimento</label><input type="date" name="data_nascimento" value="${a.data_nascimento?a.data_nascimento.substring(0,10):''}"></div>
+        </div>
+        <div class="form-group"><label>Nome Completo *</label><input name="nome" required value="${a.nome||''}"></div>
+        <div class="form-group"><label>Turma *</label><select name="turma_id" required><option value="">Selecione...</option>${turmaOpts}</select></div>
+        <div class="form-row">
+          <div class="form-group"><label>Responsável</label><input name="responsavel" value="${a.responsavel||''}"></div>
+          <div class="form-group"><label>Telefone</label><input name="telefone_responsavel" value="${a.telefone_responsavel||''}"></div>
+        </div>
+        <div class="form-group"><label>Email do Responsável</label><input type="email" name="email_responsavel" value="${a.email_responsavel||''}"></div>
+        <div class="form-group"><label>Status</label>
+          <select name="status">
+            <option value="ATIVO" ${a.status==='ATIVO'?'selected':''}>Ativo</option>
+            <option value="TRANSFERIDO" ${a.status==='TRANSFERIDO'?'selected':''}>Transferido</option>
+            <option value="EVADIDO" ${a.status==='EVADIDO'?'selected':''}>Evadido</option>
+            <option value="CONCLUIDO" ${a.status==='CONCLUIDO'?'selected':''}>Concluído</option>
+          </select>
+        </div>
+      </form>
+    `,
+    '<button class="btn btn-secondary" onclick="App.closeModal()">Cancelar</button>' +
+    '<button class="btn btn-primary" id="btn-save-aluno">Salvar</button>');
+    document.getElementById('btn-save-aluno').onclick = () => this.saveAluno(id);
+  },
+
+  async saveAluno(id) {
+    const f = document.getElementById('form-aluno');
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    const data = Object.fromEntries(new FormData(f));
+    data.turma_id = parseInt(data.turma_id);
+    Object.keys(data).forEach(k => { if (data[k] === '') data[k] = null; });
+    const btn = document.getElementById('btn-save-aluno');
+    btn.disabled = true; btn.innerHTML = '<span class="loading"></span> Salvando...';
+    try {
+      if (id) await this.api('/alunos/' + id, { method: 'PUT', body: data });
+      else await this.api('/alunos', { method: 'POST', body: data });
+      this.toast('Aluno ' + (id ? 'atualizado' : 'criado') + ' com sucesso!', 'success');
+      this.closeModal();
+      this.loadAlunos();
+    } catch (err) { this.toast(err.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Salvar'; }
+  },
+
+  async excluirAluno(id) {
+    const a = this.alunosCache.find(x => x.id === id);
+    if (!await this.confirmar('Marcar <b>' + a.nome + '</b> como evadido? O histórico será preservado.')) return;
+    try {
+      await this.api('/alunos/' + id, { method: 'DELETE' });
+      this.toast('Aluno marcado como evadido', 'success');
+      this.loadAlunos();
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  async verHistorico(id) {
+    this.showPage('aluno-perfil');
+    document.getElementById('aluno-perfil-conteudo').innerHTML = '<div class="spinner-overlay">Carregando perfil...</div>';
+    try {
+      const d = await this.api('/relatorios/aluno/' + id);
+      const a = d.aluno, r = d.resumo, ocs = d.ocorrencias;
+      document.getElementById('perfil-titulo').textContent = 'Histórico de ' + a.nome;
+      const alerta = (r.gravissimas > 0 || r.graves >= 2) ? '<div class="card" style="border-left:4px solid var(--vermelho);margin-bottom:14px"><b style="color:var(--vermelho)">⚠ Atenção:</b> Aluno em situação crítica disciplinarmente.</div>' : '';
+      document.getElementById('aluno-perfil-conteudo').innerHTML = `
+        ${alerta}
+        <div class="aluno-perfil">
+          <h2>${a.nome}</h2>
+          <div class="info-grid">
+            <div class="info-item"><label>Matrícula</label>${a.matricula}</div>
+            <div class="info-item"><label>Turma</label>${a.turma_nome} (${a.turno})</div>
+            <div class="info-item"><label>Série</label>${a.serie}</div>
+            <div class="info-item"><label>Responsável</label>${a.responsavel||'—'}</div>
+            <div class="info-item"><label>Telefone</label>${a.telefone_responsavel||'—'}</div>
+            <div class="info-item"><label>Status</label><span class="tag tag-${a.status.toLowerCase()}">${a.status}</span></div>
+          </div>
+        </div>
+        <div class="card-grid" style="margin-bottom:16px">
+          <div class="stat-card"><div class="label">Total</div><div class="value">${r.total}</div></div>
+          <div class="stat-card verde"><div class="label">Leves</div><div class="value">${r.leves}</div></div>
+          <div class="stat-card laranja"><div class="label">Médias</div><div class="value">${r.medias}</div></div>
+          <div class="stat-card vermelho"><div class="label">Graves+</div><div class="value">${r.graves + r.gravissimas}</div></div>
+        </div>
+        <h3 style="margin:18px 0 12px;color:var(--azul)">Linha do tempo</h3>
+        ${ocs.length ? `<div class="timeline">${ocs.map(o => `
+          <div class="timeline-item ${o.gravidade.toLowerCase()}">
+            <div class="data">${this.fmtData(o.data_ocorrencia)} • registrado por ${o.registrado_por_nome||'—'} • ${this.tagGravidade(o.gravidade)} ${this.tagStatus(o.status)}</div>
+            <div class="tipo">${o.tipo}</div>
+            <div class="desc">${this.escapeHtml(o.descricao)}</div>
+            ${o.medida_aplicada ? `<div class="desc" style="margin-top:6px"><b>Medida:</b> ${this.escapeHtml(o.medida_aplicada)}</div>` : ''}
+          </div>`).join('')}</div>` : '<div class="empty">Nenhuma ocorrência registrada para este aluno.</div>'}
+      `;
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  // === OCORRÊNCIAS ===
+  async loadOcorrencias() {
+    document.getElementById('tabela-ocorrencias').innerHTML = '<div class="spinner-overlay">Carregando ocorrências...</div>';
+    try {
+      const params = new URLSearchParams();
+      const busca = document.getElementById('busca-ocorrencia').value;
+      const grav = document.getElementById('filtro-gravidade-oc').value;
+      const stat = document.getElementById('filtro-status-oc').value;
+      const di = document.getElementById('filtro-data-inicio').value;
+      const df = document.getElementById('filtro-data-fim').value;
+      if (busca) params.append('busca', busca);
+      if (grav) params.append('gravidade', grav);
+      if (stat) params.append('status', stat);
+      if (di) params.append('data_inicio', di);
+      if (df) params.append('data_fim', df);
+      const ocs = await this.api('/ocorrencias?' + params);
+      if (!ocs.length) {
+        document.getElementById('tabela-ocorrencias').innerHTML = '<div class="empty"><div class="icon">📋</div>Nenhuma ocorrência encontrada.</div>';
+        return;
+      }
+      this.ocorrenciasCache = ocs;
+      const pode = ['ADMIN','COORDENADOR'].includes(this.usuario.perfil);
+      document.getElementById('tabela-ocorrencias').innerHTML = `
+        <table>
+          <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Status</th><th>Por</th><th>Ações</th></tr></thead>
+          <tbody>${ocs.map(o => `
+            <tr>
+              <td>${this.fmtData(o.data_ocorrencia)}</td><td><b>${o.aluno_nome}</b></td><td>${o.turma_nome}</td>
+              <td>${o.tipo}</td><td>${this.tagGravidade(o.gravidade)}</td><td>${this.tagStatus(o.status)}</td>
+              <td style="font-size:11px">${o.registrado_por_nome||'—'}</td>
+              <td>
+                <button class="btn btn-sm btn-secondary" onclick="App.modalOcorrencia(${o.id})">Ver/Editar</button>
+                ${pode && o.status !== 'ARQUIVADO' ? `<button class="btn btn-sm btn-danger" onclick="App.arquivarOcorrencia(${o.id})">Arquivar</button>` : ''}
+              </td>
+            </tr>`).join('')}</tbody>
+        </table>`;
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  async modalOcorrencia(id) {
+    if (!this.turmasCache.length) this.turmasCache = await this.api('/turmas');
+    if (!this.alunosCache.length || this.alunosCache.length < 2) this.alunosCache = await this.api('/alunos?status=ATIVO');
+    const o = id ? (this.ocorrenciasCache || []).find(x => x.id === id) || await this.api('/ocorrencias/' + id) : {};
+    const alunoOpts = this.alunosCache.map(a =>
+      `<option value="${a.id}" ${o.aluno_id===a.id?'selected':''}>${a.nome} - ${a.matricula} (${a.turma_nome||''})</option>`).join('');
+    const tiposComuns = ['Advertência verbal','Advertência escrita','Suspensão','Indisciplina','Briga','Desrespeito','Falta sem justificativa','Uniforme inadequado','Uso indevido de celular','Bullying','Dano ao patrimônio','Elogio'];
+    const tipoOpts = tiposComuns.map(t => `<option value="${t}" ${o.tipo===t?'selected':''}>${t}</option>`).join('');
+    const hoje = new Date().toISOString().substring(0, 10);
+    this.openModal(id ? 'Detalhes da Ocorrência' : 'Registrar Ocorrência', `
+      <form id="form-ocorrencia">
+        <div class="form-group"><label>Aluno *</label>
+          <select name="aluno_id" required><option value="">Selecione o aluno...</option>${alunoOpts}</select>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Data *</label><input type="date" name="data_ocorrencia" required value="${o.data_ocorrencia?o.data_ocorrencia.substring(0,10):hoje}"></div>
+          <div class="form-group"><label>Hora</label><input type="time" name="hora_ocorrencia" value="${o.hora_ocorrencia||''}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Tipo *</label>
+            <select name="tipo" required><option value="">Selecione...</option>${tipoOpts}</select>
+          </div>
+          <div class="form-group"><label>Gravidade *</label>
+            <select name="gravidade" required>
+              <option value="LEVE" ${o.gravidade==='LEVE'?'selected':''}>Leve</option>
+              <option value="MEDIA" ${o.gravidade==='MEDIA'?'selected':''}>Média</option>
+              <option value="GRAVE" ${o.gravidade==='GRAVE'?'selected':''}>Grave</option>
+              <option value="GRAVISSIMA" ${o.gravidade==='GRAVISSIMA'?'selected':''}>Gravíssima</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Local</label><input name="local_ocorrencia" value="${o.local_ocorrencia||''}" placeholder="Sala de aula, pátio, etc."></div>
+        <div class="form-group"><label>Descrição *</label><textarea name="descricao" required minlength="3">${o.descricao||''}</textarea></div>
+        <div class="form-group"><label>Medida Aplicada</label><input name="medida_aplicada" value="${o.medida_aplicada||''}" placeholder="Advertência, suspensão, etc."></div>
+        <div class="form-row">
+          <div class="form-group"><label>Status</label>
+            <select name="status">
+              <option value="ABERTO" ${o.status==='ABERTO'?'selected':''}>Em aberto</option>
+              <option value="EM_ANALISE" ${o.status==='EM_ANALISE'?'selected':''}>Em análise</option>
+              <option value="CONCLUIDO" ${o.status==='CONCLUIDO'?'selected':''}>Concluído</option>
+            </select>
+          </div>
+          <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:10px">
+            <label class="form-check"><input type="checkbox" name="responsavel_notificado" ${o.responsavel_notificado?'checked':''}> Responsável notificado</label>
+          </div>
+        </div>
+      </form>
+    `,
+    '<button class="btn btn-secondary" onclick="App.closeModal()">Cancelar</button>' +
+    '<button class="btn btn-primary" id="btn-save-oc">Salvar</button>');
+    document.getElementById('btn-save-oc').onclick = () => this.saveOcorrencia(id);
+  },
+
+  async saveOcorrencia(id) {
+    const f = document.getElementById('form-ocorrencia');
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    const fd = new FormData(f);
+    const data = {};
+    fd.forEach((v, k) => { if (v !== '') data[k] = v; });
+    data.aluno_id = parseInt(data.aluno_id);
+    data.responsavel_notificado = f.responsavel_notificado.checked;
+    const btn = document.getElementById('btn-save-oc');
+    btn.disabled = true; btn.innerHTML = '<span class="loading"></span> Salvando...';
+    try {
+      if (id) await this.api('/ocorrencias/' + id, { method: 'PUT', body: data });
+      else await this.api('/ocorrencias', { method: 'POST', body: data });
+      this.toast('Ocorrência ' + (id ? 'atualizada' : 'registrada') + '!', 'success');
+      this.closeModal();
+      this.loadOcorrencias();
+    } catch (err) { this.toast(err.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Salvar'; }
+  },
+
+  async arquivarOcorrencia(id) {
+    if (!await this.confirmar('Arquivar esta ocorrência? Ela ficará oculta mas preservada no histórico.')) return;
+    try {
+      await this.api('/ocorrencias/' + id, { method: 'DELETE' });
+      this.toast('Ocorrência arquivada', 'success');
+      this.loadOcorrencias();
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  // === RELATÓRIOS ===
+  async loadRelatoriosPage() {
+    if (!this.turmasCache.length) {
+      try { this.turmasCache = await this.api('/turmas'); this.populateSelectsTurmas(); } catch(e){}
+    } else this.populateSelectsTurmas();
+    document.getElementById('relatorio-resultado').innerHTML = '<div class="empty"><div class="icon">📈</div>Selecione os filtros e clique em "Gerar Relatório".</div>';
+  },
+
+  async gerarRelatorio() {
+    const params = new URLSearchParams();
+    const t = document.getElementById('rel-turma').value;
+    const g = document.getElementById('rel-gravidade').value;
+    const di = document.getElementById('rel-data-inicio').value;
+    const df = document.getElementById('rel-data-fim').value;
+    if (t) params.append('turma_id', t);
+    if (g) params.append('gravidade', g);
+    if (di) params.append('data_inicio', di);
+    if (df) params.append('data_fim', df);
+    document.getElementById('relatorio-resultado').innerHTML = '<div class="spinner-overlay">Gerando relatório...</div>';
+    try {
+      const r = await this.api('/relatorios/periodo?' + params);
+      const ranking = await this.api('/relatorios/ranking-alunos?limit=10');
+      this.relatorioCache = r;
+      const periodoTxt = (di || df) ? `<b>Período:</b> ${di || '...'} a ${df || '...'}` : '<b>Período:</b> Todo o histórico';
+      const totalG = r.por_gravidade.reduce((s, x) => s + x.total, 0) || 1;
+      const totalT = r.por_tipo.reduce((s, x) => s + x.total, 0) || 1;
+      document.getElementById('relatorio-resultado').innerHTML = `
+        <div class="card" style="margin-bottom:14px">
+          <p style="font-size:13px">${periodoTxt} • <b>Total:</b> ${r.total} ocorrência(s)</p>
+        </div>
+
+        <div class="relatorio-section">
+          <h3>Distribuição por Gravidade</h3>
+          <div class="chart-bars">
+            ${r.por_gravidade.map(x => `
+              <div class="chart-bar">
+                <div>${x.gravidade}</div>
+                <div><div class="bar ${x.gravidade.toLowerCase()}" style="width:${(x.total/totalG*100).toFixed(1)}%"></div></div>
+                <div><b>${x.total}</b></div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="relatorio-section">
+          <h3>Por Tipo de Ocorrência</h3>
+          <div class="chart-bars">
+            ${r.por_tipo.map(x => `
+              <div class="chart-bar">
+                <div title="${x.tipo}">${x.tipo.length > 20 ? x.tipo.substring(0,20)+'...' : x.tipo}</div>
+                <div><div class="bar" style="width:${(x.total/totalT*100).toFixed(1)}%"></div></div>
+                <div><b>${x.total}</b></div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="relatorio-section">
+          <h3>Top Alunos com Mais Ocorrências</h3>
+          ${ranking.length ? `
+          <div class="table-wrap"><table>
+            <thead><tr><th>#</th><th>Aluno</th><th>Matrícula</th><th>Turma</th><th>Total</th><th>Graves+</th><th></th></tr></thead>
+            <tbody>${ranking.map((a, i) => `
+              <tr>
+                <td>${i+1}</td><td><b>${a.nome}</b></td><td>${a.matricula}</td><td>${a.turma_nome}</td>
+                <td><b>${a.total}</b></td><td>${a.graves > 0 ? `<span style="color:var(--vermelho);font-weight:600">${a.graves}</span>` : '0'}</td>
+                <td><button class="btn btn-sm btn-secondary" onclick="App.verHistorico(${a.id})">Ver perfil</button></td>
+              </tr>`).join('')}</tbody>
+          </table></div>` : '<div class="empty">Sem dados suficientes.</div>'}
+        </div>
+
+        <div class="relatorio-section">
+          <h3>Ocorrências Detalhadas (${r.ocorrencias.length})</h3>
+          ${r.ocorrencias.length ? `
+          <div class="table-wrap"><table>
+            <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Status</th></tr></thead>
+            <tbody>${r.ocorrencias.slice(0, 100).map(o => `
+              <tr><td>${this.fmtData(o.data_ocorrencia)}</td><td>${o.aluno_nome}</td><td>${o.turma_nome}</td>
+              <td>${o.tipo}</td><td>${this.tagGravidade(o.gravidade)}</td><td>${this.tagStatus(o.status)}</td></tr>`).join('')}</tbody>
+          </table></div>
+          ${r.ocorrencias.length > 100 ? '<p style="margin-top:8px;font-size:12px;color:var(--cinza)">Mostrando 100 primeiras. Exporte CSV para ver todas.</p>' : ''}
+          ` : '<div class="empty">Nenhuma ocorrência no período/filtro.</div>'}
+        </div>
+      `;
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  exportarCSV() {
+    if (!this.relatorioCache || !this.relatorioCache.ocorrencias.length) {
+      this.toast('Gere um relatório primeiro', 'warn'); return;
+    }
+    const rows = this.relatorioCache.ocorrencias;
+    const headers = ['Data','Hora','Aluno','Matrícula','Turma','Tipo','Gravidade','Status','Local','Descrição','Medida','Responsável Notificado'];
+    const csv = [headers.join(',')];
+    rows.forEach(o => {
+      const line = [
+        o.data_ocorrencia ? o.data_ocorrencia.substring(0,10) : '',
+        o.hora_ocorrencia || '',
+        o.aluno_nome, o.matricula, o.turma_nome,
+        o.tipo, o.gravidade, o.status,
+        o.local_ocorrencia || '',
+        (o.descricao || '').replace(/"/g, '""'),
+        (o.medida_aplicada || '').replace(/"/g, '""'),
+        o.responsavel_notificado ? 'Sim' : 'Não'
+      ].map(v => '"' + String(v).replace(/\r?\n/g,' ') + '"').join(',');
+      csv.push(line);
+    });
+    const blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'relatorio-disciplinar-' + new Date().toISOString().substring(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    this.toast('CSV exportado', 'success');
+  },
+
+  // === USUÁRIOS ===
+  async loadUsuarios() {
+    document.getElementById('tabela-usuarios').innerHTML = '<div class="spinner-overlay">Carregando usuários...</div>';
+    try {
+      this.usuariosCache = await this.api('/usuarios');
+      if (!this.usuariosCache.length) {
+        document.getElementById('tabela-usuarios').innerHTML = '<div class="empty">Nenhum usuário cadastrado.</div>'; return;
+      }
+      document.getElementById('tabela-usuarios').innerHTML = `
+        <table>
+          <thead><tr><th>Login</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Status</th><th>Último Acesso</th><th>Ações</th></tr></thead>
+          <tbody>${this.usuariosCache.map(u => `
+            <tr>
+              <td><b>${u.login}</b></td><td>${u.nome}</td><td>${u.email||'—'}</td>
+              <td><span class="tag tag-aberto" style="background:#dbeafe;color:#1e40af">${u.perfil}</span></td>
+              <td><span class="tag tag-${u.ativo?'ativa':'inativa'}">${u.ativo?'Ativo':'Inativo'}</span></td>
+              <td style="font-size:11px">${u.ultimo_acesso ? this.fmtDataHora(u.ultimo_acesso) : '—'}</td>
+              <td>
+                <button class="btn btn-sm btn-secondary" onclick="App.modalUsuario(${u.id})">Editar</button>
+                ${u.id !== this.usuario.id ? `<button class="btn btn-sm btn-danger" onclick="App.desativarUsuario(${u.id})">Desativar</button>` : ''}
+              </td>
+            </tr>`).join('')}</tbody>
+        </table>`;
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  modalUsuario(id) {
+    const u = id ? this.usuariosCache.find(x => x.id === id) : {};
+    this.openModal(id ? 'Editar Usuário' : 'Novo Usuário', `
+      <form id="form-usuario">
+        <div class="form-row">
+          <div class="form-group"><label>Login *</label><input name="login" required value="${u.login||''}" ${id?'readonly':''}></div>
+          <div class="form-group"><label>Senha ${id?'(deixe vazio para não alterar)':'*'}</label><input type="password" name="senha" ${id?'':'required minlength="6"'}></div>
+        </div>
+        <div class="form-group"><label>Nome Completo *</label><input name="nome" required value="${u.nome||''}"></div>
+        <div class="form-group"><label>Email</label><input type="email" name="email" value="${u.email||''}"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Perfil *</label>
+            <select name="perfil" required>
+              <option value="PROFESSOR" ${u.perfil==='PROFESSOR'?'selected':''}>Professor</option>
+              <option value="COORDENADOR" ${u.perfil==='COORDENADOR'?'selected':''}>Coordenador</option>
+              <option value="ADMIN" ${u.perfil==='ADMIN'?'selected':''}>Administrador</option>
+            </select>
+          </div>
+          <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:10px">
+            <label class="form-check"><input type="checkbox" name="ativo" ${(u.ativo!==false)?'checked':''}> Ativo</label>
+          </div>
+        </div>
+      </form>
+    `,
+    '<button class="btn btn-secondary" onclick="App.closeModal()">Cancelar</button>' +
+    '<button class="btn btn-primary" id="btn-save-user">Salvar</button>');
+    document.getElementById('btn-save-user').onclick = () => this.saveUsuario(id);
+  },
+
+  async saveUsuario(id) {
+    const f = document.getElementById('form-usuario');
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    const fd = new FormData(f);
+    const data = {};
+    fd.forEach((v, k) => { if (v !== '') data[k] = v; });
+    data.ativo = f.ativo.checked;
+    if (id && !data.senha) delete data.senha;
+    const btn = document.getElementById('btn-save-user');
+    btn.disabled = true; btn.innerHTML = '<span class="loading"></span> Salvando...';
+    try {
+      if (id) await this.api('/usuarios/' + id, { method: 'PUT', body: data });
+      else await this.api('/usuarios', { method: 'POST', body: data });
+      this.toast('Usuário ' + (id ? 'atualizado' : 'criado'), 'success');
+      this.closeModal();
+      this.loadUsuarios();
+    } catch (err) { this.toast(err.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Salvar'; }
+  },
+
+  async desativarUsuario(id) {
+    const u = this.usuariosCache.find(x => x.id === id);
+    if (!await this.confirmar('Desativar o usuário <b>' + u.nome + '</b>? Ele não poderá mais fazer login.')) return;
+    try {
+      await this.api('/usuarios/' + id, { method: 'DELETE' });
+      this.toast('Usuário desativado', 'success');
+      this.loadUsuarios();
+    } catch (err) { this.toast(err.message, 'error'); }
+  },
+
+  // === HELPERS ===
+  fmtData(d) { if(!d) return '—'; const x = new Date(d); return x.toLocaleDateString('pt-BR', {timeZone:'UTC'}); },
+  fmtDataHora(d) { if(!d) return '—'; return new Date(d).toLocaleString('pt-BR'); },
+  tagGravidade(g) { return `<span class="tag tag-${(g||'').toLowerCase()}">${g||'—'}</span>`; },
+  tagStatus(s) {
+    const map = { 'ABERTO':'aberto','EM_ANALISE':'em-analise','CONCLUIDO':'concluido','ARQUIVADO':'arquivado' };
+    return `<span class="tag tag-${map[s]||'aberto'}">${s||'—'}</span>`;
+  },
+  escapeHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); },
 };
 
-async function pageAlunos(main) {
-  const alunos = await api('/alunos');
-  main.innerHTML = `
-    <h1>👨‍🎓 Alunos</h1>
-    <table>
-      <thead><tr><th>Matrícula</th><th>Nome</th><th>Turma</th><th>Status</th><th></th></tr></thead>
-      <tbody>
-        ${alunos.map(a => `
-          <tr>
-            <td>${a.matricula}</td><td>${a.nome}</td><td>${a.turma_nome}</td><td>${a.status}</td>
-            <td><button class="btn-small" onclick="verHistorico(${a.id}, '${a.nome.replace(/'/g, "\\'")}')">Histórico</button></td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-async function pageTurmas(main) {
-  const turmas = await api('/turmas');
-  main.innerHTML = `
-    <h1>🏫 Turmas</h1>
-    <table>
-      <thead><tr><th>Nome</th><th>Série</th><th>Turno</th><th>Ano</th><th>Professor</th><th>Alunos</th><th>Status</th></tr></thead>
-      <tbody>
-        ${turmas.map(t => `
-          <tr><td><strong>${t.nome}</strong></td><td>${t.serie}</td><td>${t.turno}</td><td>${t.ano_letivo}</td>
-            <td>${t.professor_responsavel || '-'}</td><td>${t.total_alunos}</td><td>${t.status}</td></tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-async function pageOcorrencias(main) {
-  const ocs = await api('/ocorrencias');
-  main.innerHTML = `
-    <h1>⚠️ Ocorrências</h1>
-    <table>
-      <thead><tr><th>Data</th><th>Aluno</th><th>Turma</th><th>Tipo</th><th>Gravidade</th><th>Medida</th><th>Status</th></tr></thead>
-      <tbody>
-        ${ocs.map(o => `
-          <tr>
-            <td>${formatData(o.data_ocorrencia)}</td><td>${o.aluno_nome}</td><td>${o.turma_nome}</td>
-            <td>${o.tipo}</td><td>${badge('gravidade', o.gravidade)}</td>
-            <td>${o.medida_aplicada || '-'}</td><td>${badge('status', o.status)}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-async function pageUsuarios(main) {
-  const us = await api('/usuarios');
-  main.innerHTML = `
-    <h1>👥 Usuários</h1>
-    <table>
-      <thead><tr><th>Login</th><th>Nome</th><th>Email</th><th>Perfil</th><th>Ativo</th><th>Último acesso</th></tr></thead>
-      <tbody>
-        ${us.map(u => `
-          <tr><td>${u.login}</td><td>${u.nome}</td><td>${u.email || '-'}</td>
-            <td><span class="badge badge-leve">${u.perfil}</span></td>
-            <td>${u.ativo ? '✅' : '❌'}</td>
-            <td>${u.ultimo_acesso ? formatData(u.ultimo_acesso) : 'Nunca'}</td></tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-window.carregarPagina = carregarPagina;
-
-// auto-login se já existe token
-if (token && usuario) entrarNoApp();
-</script>
-
-<script>
-(function(){
-  function syncToggle(){
-    var login = document.getElementById('login-screen');
-    var toggle = document.getElementById('menu-toggle');
-    if(!login || !toggle) return;
-    var visible = login.style.display !== 'none' && getComputedStyle(login).display !== 'none';
-    toggle.style.display = visible ? 'none' : '';
-    if(!visible){
-      // restore default (CSS will hide on desktop)
-      toggle.style.removeProperty('display');
-    }
-  }
-  document.addEventListener('DOMContentLoaded', syncToggle);
-  // observe display changes
-  var obs = new MutationObserver(syncToggle);
-  document.addEventListener('DOMContentLoaded', function(){
-    var login = document.getElementById('login-screen');
-    if(login) obs.observe(login, {attributes:true, attributeFilter:['style']});
-  });
-  // Close drawer when clicking a menu link on mobile
-  document.addEventListener('click', function(e){
-    var t = e.target.closest('.sidebar a, .sidebar button, .sidebar [data-section]');
-    if(t && window.innerWidth <= 768){
-      document.querySelector('.sidebar').classList.remove('open');
-      var ov = document.getElementById('sidebar-overlay');
-      if(ov) ov.classList.remove('show');
-    }
-  });
-})();
+document.addEventListener('DOMContentLoaded', () => App.init());
 </script>
 </body>
 </html>
